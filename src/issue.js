@@ -39,6 +39,8 @@ async function update(token, body, issueNumber) {
     }
   )
 
+  console.log('response after update: ' + JSON.stringify(response))
+
   return response.data.length > 0 ? response.data[0] : null
 }
 
