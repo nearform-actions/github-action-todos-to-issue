@@ -1,7 +1,10 @@
+'use strict'
+
 const { execSync } = require('child_process')
 const appRoot = require('app-root-path')
 
 const { logError } = require('./log')
+const { buildUrl } = require('./utils')
 
 function getFilesMatchingPattern(pattern, scanDir) {
   try {
@@ -28,7 +31,7 @@ function findOccurrencies(file, pattern) {
     })
       .split('\n')
       .filter(line => line)
-      .map(occurrence => buildOccurrenceObject(occurrence))
+      .map(occurrence => buildOccurrence(occurrence, file))
 
     return { file, occurrencies }
   } catch (err) {
@@ -37,16 +40,21 @@ function findOccurrencies(file, pattern) {
   }
 }
 
-function buildOccurrenceObject(occurrence) {
+function buildOccurrence(occurrence, file) {
   const occurrenceParts = occurrence.split(/:(.*)/s)
 
   if (occurrenceParts.length < 2) {
     throw new Error('Unable to parse the current line: ' + occurrence)
   }
 
+  const line = parseInt(occurrenceParts[0])
+  const comment = occurrenceParts[1].trim()
+  const url = buildUrl(file, line)
+
   const parsedOccurrence = {
-    line: parseInt(occurrenceParts[0]),
-    comment: occurrenceParts[1].trim()
+    line,
+    comment,
+    url
   }
 
   return parsedOccurrence

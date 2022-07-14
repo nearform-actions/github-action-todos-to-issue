@@ -8,6 +8,9 @@ inputs:
   github-token:
     description: 'GitHub token'
     required: true
+  current-branch:
+    description: 'Current repository branch'
+    require: true
   pattern:
     description: 'Pattern to match'
     required: false
