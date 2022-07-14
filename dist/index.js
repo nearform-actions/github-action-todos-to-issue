@@ -9174,7 +9174,7 @@ async function run() {
 
   // Loop each file and find the pattern occurrencies
   const occurrencies = filesList.map(file => findOccurrencies(file, pattern))
-  console.log('Occurrencies print: ' + occurrencies)
+  console.log('Occurrencies print: ' + JSON.stringify(occurrencies))
 
   const issueBody = buildIssueBody(occurrencies)
 
@@ -9262,11 +9262,9 @@ const github = __nccwpck_require__(5438)
 const { ISSUE_TITLE, ISSUE_LABEL, STATE_OPEN } = __nccwpck_require__(3776)
 const { logInfo } = __nccwpck_require__(7739)
 
-/*
 function buildIssueBody(occurrencies) {
-  
+  return occurrencies
 }
-*/
 
 async function getLastOpenIssue(token) {
   const octokit = github.getOctokit(token)
@@ -9335,7 +9333,7 @@ async function publishIssue(token, body) {
 }
 
 module.exports = {
-  //buildIssueBody,
+  buildIssueBody,
   publishIssue
 }
 

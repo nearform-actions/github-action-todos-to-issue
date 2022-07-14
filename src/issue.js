@@ -4,11 +4,9 @@ const github = require('@actions/github')
 const { ISSUE_TITLE, ISSUE_LABEL, STATE_OPEN } = require('./constants')
 const { logInfo } = require('./log')
 
-/*
 function buildIssueBody(occurrencies) {
-  
+  return occurrencies
 }
-*/
 
 async function getLastOpenIssue(token) {
   const octokit = github.getOctokit(token)
@@ -77,6 +75,6 @@ async function publishIssue(token, body) {
 }
 
 module.exports = {
-  //buildIssueBody,
+  buildIssueBody,
   publishIssue
 }

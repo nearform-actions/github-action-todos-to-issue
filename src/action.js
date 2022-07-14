@@ -22,7 +22,7 @@ async function run() {
 
   // Loop each file and find the pattern occurrencies
   const occurrencies = filesList.map(file => findOccurrencies(file, pattern))
-  console.log('Occurrencies print: ' + occurrencies)
+  console.log('Occurrencies print: ' + JSON.stringify(occurrencies))
 
   const issueBody = buildIssueBody(occurrencies)
 
