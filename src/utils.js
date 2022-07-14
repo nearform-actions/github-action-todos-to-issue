@@ -27,8 +27,6 @@ function buildUrl(file, line) {
   const { branch } = getInputs()
   const { owner, repo } = github.context.repo
 
-  //const relativeFilePath = getRelativeFilePath(file, workspace)
-
   const uri = `https://github.com/${owner}/${repo}/blob/${branch}/${file}?plain=1#L${line}`
 
   return uri

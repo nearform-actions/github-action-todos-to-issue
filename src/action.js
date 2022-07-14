@@ -29,8 +29,10 @@ async function run() {
   const occurrencies = filesList.map(file => findOccurrencies(file, pattern))
   console.log('Occurrencies print: ' + JSON.stringify(occurrencies))
 
+  // Build the issue body
   const issueBody = buildIssueBody(occurrencies)
 
+  // Publish the issue
   const issue = await publishIssue(token, issueBody)
   console.log('Issue number: ' + issue.number)
 }

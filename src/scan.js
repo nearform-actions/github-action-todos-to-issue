@@ -11,31 +11,19 @@ function getFilesMatchingPattern(
   excludeDirs,
   scanExtensions
 ) {
-  try {
-    console.log(execSync('ls -al', { encoding: 'utf8' }))
+  const bashCommand = buildFileMatchingPatternCommand(
+    pattern,
+    scanDir,
+    excludeDirs,
+    scanExtensions
+  )
+  const filesMatchingPattern = execSync(bashCommand, {
+    encoding: 'utf8'
+  })
+    .split('\n')
+    .filter(file => file)
 
-    const bashCommand = buildFileMatchingPatternCommand(
-      pattern,
-      scanDir,
-      excludeDirs,
-      scanExtensions
-    )
-    const filesMatchingPattern = execSync(bashCommand, {
-      encoding: 'utf8'
-    })
-      .split('\n')
-      .filter(file => file)
-
-    console.log(`COMMAND: ${bashCommand}`)
-    console.log(
-      'FILES MATCHING PATTERN: ' + JSON.stringify(filesMatchingPattern)
-    )
-
-    return filesMatchingPattern
-  } catch (err) {
-    logError(err)
-    throw new Error('Pattern not found in the source code')
-  }
+  return filesMatchingPattern
 }
 
 function findOccurrencies(file, pattern) {

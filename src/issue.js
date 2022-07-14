@@ -5,7 +5,7 @@ const { ISSUE_TITLE, ISSUE_LABEL, STATE_OPEN } = require('./constants')
 const { logInfo } = require('./log')
 
 function buildIssueBody(occurrencies) {
-  return occurrencies
+  return JSON.stringify(occurrencies)
 }
 
 async function getLastOpenIssue(token) {

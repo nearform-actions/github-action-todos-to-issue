@@ -8996,8 +8996,10 @@ async function run() {
   const occurrencies = filesList.map(file => findOccurrencies(file, pattern))
   console.log('Occurrencies print: ' + JSON.stringify(occurrencies))
 
+  // Build the issue body
   const issueBody = buildIssueBody(occurrencies)
 
+  // Publish the issue
   const issue = await publishIssue(token, issueBody)
   console.log('Issue number: ' + issue.number)
 }
@@ -9017,20 +9019,28 @@ module.exports = {
  */
 const ISSUE_LABEL = 'todos'
 const ISSUE_TITLE = 'Source code TODOs list'
-const STATE_OPEN = 'open'
-const STATE_CLOSED = 'closed'
+const ISSUE_STATE_OPEN = 'open'
+const ISSUE_STATE_CLOSED = 'closed'
 
 /**
  * Tests
  */
+const TEST_PATTERN = 'TODO'
+const TEST_DEFAULT_SCAN_DIR = '.'
+const TEST_EXCLUDE_DIRS = 'node_modules,.github'
+const TEST_SCAN_EXTENSIONS = '.js,.ts,.cjs,.mjs'
 const TEST_MATCHING_DIR = 'test/resources/matchingDir'
 const TEST_NOT_MATCHING_DIR = 'test/resources/notMatchingDir'
 
 module.exports = {
   ISSUE_LABEL,
   ISSUE_TITLE,
-  STATE_OPEN,
-  STATE_CLOSED,
+  ISSUE_STATE_OPEN,
+  ISSUE_STATE_CLOSED,
+  TEST_PATTERN,
+  TEST_DEFAULT_SCAN_DIR,
+  TEST_EXCLUDE_DIRS,
+  TEST_SCAN_EXTENSIONS,
   TEST_MATCHING_DIR,
   TEST_NOT_MATCHING_DIR
 }
@@ -9047,7 +9057,6 @@ const core = __nccwpck_require__(2186)
 
 const inputs = {
   token: null,
-  workspace: null,
   branch: null,
   pattern: null,
   scanDir: null,
@@ -9057,7 +9066,6 @@ const inputs = {
 
 function initInputs() {
   inputs.token = core.getInput('github-token', { required: true })
-  inputs.workspace = core.getInput('github-workspace', { required: true })
   inputs.branch = core.getInput('github-branch', { required: true })
   inputs.pattern = core.getInput('pattern', { required: false })
   inputs.scanDir = core.getInput('scan-dir', { required: false })
@@ -9089,7 +9097,7 @@ const { ISSUE_TITLE, ISSUE_LABEL, STATE_OPEN } = __nccwpck_require__(3776)
 const { logInfo } = __nccwpck_require__(7739)
 
 function buildIssueBody(occurrencies) {
-  return occurrencies
+  return JSON.stringify(occurrencies)
 }
 
 async function getLastOpenIssue(token) {
@@ -9200,31 +9208,19 @@ function getFilesMatchingPattern(
   excludeDirs,
   scanExtensions
 ) {
-  try {
-    console.log(execSync('ls -al', { encoding: 'utf8' }))
+  const bashCommand = buildFileMatchingPatternCommand(
+    pattern,
+    scanDir,
+    excludeDirs,
+    scanExtensions
+  )
+  const filesMatchingPattern = execSync(bashCommand, {
+    encoding: 'utf8'
+  })
+    .split('\n')
+    .filter(file => file)
 
-    const bashCommand = buildFileMatchingPatternCommand(
-      pattern,
-      scanDir,
-      excludeDirs,
-      scanExtensions
-    )
-    const filesMatchingPattern = execSync(bashCommand, {
-      encoding: 'utf8'
-    })
-      .split('\n')
-      .filter(file => file)
-
-    console.log(`COMMAND: ${bashCommand}`)
-    console.log(
-      'FILES MATCHING PATTERN: ' + JSON.stringify(filesMatchingPattern)
-    )
-
-    return filesMatchingPattern
-  } catch (err) {
-    logError(err)
-    throw new Error('Pattern not found in the source code')
-  }
+  return filesMatchingPattern
 }
 
 function findOccurrencies(file, pattern) {
@@ -9303,8 +9299,6 @@ function buildFileMatchingPatternCommand(
 function buildUrl(file, line) {
   const { branch } = getInputs()
   const { owner, repo } = github.context.repo
-
-  //const relativeFilePath = getRelativeFilePath(file, workspace)
 
   const uri = `https://github.com/${owner}/${repo}/blob/${branch}/${file}?plain=1#L${line}`
 
