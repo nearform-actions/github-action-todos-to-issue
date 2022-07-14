@@ -9294,7 +9294,7 @@ function buildFileMatchingPatternCommand(
   const excludeDirsCmd = excludeDirs
     .split(',')
     .filter(dir => dir)
-    .map(dir => `! -path "./${dir}/*`)
+    .map(dir => `! -path "./${dir}/*"`)
     .join(' ')
 
   return `find ${scanDir} -type f \\( ${scanExtensionsCmd} \\) ${excludeDirsCmd} -exec grep -rl "${pattern}" {} \\;`
