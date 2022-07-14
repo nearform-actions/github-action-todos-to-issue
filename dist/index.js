@@ -8994,7 +8994,6 @@ async function run() {
 
   // Loop each file and find the pattern occurrencies
   const occurrencies = filesList.map(file => findOccurrencies(file, pattern))
-  console.log('Occurrencies print: ' + JSON.stringify(occurrencies))
 
   // Build the issue body
   const issueBody = buildIssueBody(occurrencies)
@@ -9131,9 +9130,7 @@ async function update(token, body, issueNumber) {
     }
   )
 
-  console.log('response after update: ' + JSON.stringify(response))
-
-  return response.data.length > 0 ? response.data[0] : null
+  return response.data ? response.data : null
 }
 
 async function create(token, body) {
@@ -9158,9 +9155,7 @@ async function create(token, body) {
 async function publishIssue(token, body) {
   let issue = await getLastOpenIssue(token)
   if (issue) {
-    console.log('before ISSUE: ' + JSON.stringify(issue))
     issue = await update(token, body, issue.number)
-    console.log('after ISSUE: ' + JSON.stringify(issue))
     logInfo(`Existing TODOs issue ${issue.number} has been updated.`)
   } else {
     issue = await create(token, body)
