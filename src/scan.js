@@ -1,19 +1,15 @@
 'use strict'
 
 const { execSync } = require('child_process')
-const appRoot = require('app-root-path')
 
 const { logError } = require('./log')
 const { buildUrl } = require('./utils')
 
-function getFilesMatchingPattern(pattern, scanDir) {
+function getFilesMatchingPattern(pattern, workspace, scanDir) {
   try {
-    console.log(
-      'git rev-parse --show-toplevel: ' +
-        execSync('git rev-parse --show-toplevel')
-    )
+    console.log('WORKSPACE: ' + workspace)
     const filesMatchingPattern = execSync(
-      `grep -rl --exclude-dir=node_modules "${pattern}" ${appRoot}/${scanDir}`,
+      `grep -rl --exclude-dir=node_modules "${pattern}" ${workspace}/${scanDir}`,
       {
         encoding: 'utf8'
       }

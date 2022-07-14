@@ -7,7 +7,11 @@ const pattern = 'TODO'
 
 describe('getFilesMatchingPattern', () => {
   it('should return the list of files matching with the specified pattern', () => {
-    const filesList = getFilesMatchingPattern(pattern, TEST_MATCHING_DIR)
+    const filesList = getFilesMatchingPattern(
+      pattern,
+      appRoot,
+      TEST_MATCHING_DIR
+    )
     const expectedFilesList = [
       `${appRoot}/${TEST_MATCHING_DIR}/sample1.js`,
       `${appRoot}/${TEST_MATCHING_DIR}/sample2.js`
@@ -18,7 +22,7 @@ describe('getFilesMatchingPattern', () => {
   it('should throw an error if no files are found with the specified pattern', () => {
     expect.assertions(1)
     try {
-      getFilesMatchingPattern(pattern, TEST_NOT_MATCHING_DIR)
+      getFilesMatchingPattern(pattern, appRoot, TEST_NOT_MATCHING_DIR)
     } catch (err) {
       // eslint-disable-next-line jest/no-conditional-expect
       expect(err.message).toBe('Pattern not found in the source code')

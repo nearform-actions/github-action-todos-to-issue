@@ -4320,183 +4320,6 @@ exports.restEndpointMethods = restEndpointMethods;
 
 /***/ }),
 
-/***/ 4808:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-var lib = __nccwpck_require__(8035);
-module.exports = lib(__dirname);
-
-/***/ }),
-
-/***/ 8035:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-module.exports = function(dirname) {
-	var path = __nccwpck_require__(1017);
-	var resolve = __nccwpck_require__(5619);
-	var appRootPath = resolve(dirname);
-
-	var publicInterface = {
-		resolve: function(pathToModule) {
-			return path.join(appRootPath, pathToModule);
-		},
-
-		require: function(pathToModule) {
-			return require(publicInterface.resolve(pathToModule));
-		},
-
-		toString: function() {
-			return appRootPath;
-		},
-
-		setPath: function(explicitlySetPath) {
-			appRootPath = path.resolve(explicitlySetPath);
-			publicInterface.path = appRootPath;
-		},
-
-		path: appRootPath
-	};
-
-	return publicInterface;
-};
-
-/***/ }),
-
-/***/ 5619:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-// Dependencies
-var path = __nccwpck_require__(1017);
-
-// Load global paths
-var globalPaths = (__nccwpck_require__(8188).globalPaths);
-
-// Guess at NPM's global install dir
-var npmGlobalPrefix;
-if ('win32' === process.platform) {
-	npmGlobalPrefix = path.dirname(process.execPath);
-} else {
-	npmGlobalPrefix = path.dirname(path.dirname(process.execPath));
-}
-var npmGlobalModuleDir = path.resolve(npmGlobalPrefix, 'lib', 'node_modules');
-
-// Save OS-specific path separator
-var sep = path.sep;
-
-// If we're in webpack, force it to use the original require() method
-var requireFunction = ( true)
-	? eval("require")
-	: 0;
-
-const isInstalledWithPNPM = function(resolved) {
-	const pnpmDir = sep + '.pnpm';
-
-	for (const globalPath of globalPaths) {
-		if (-1 !== globalPath.indexOf(pnpmDir) && -1 !== resolved.indexOf(pnpmDir)) {
-			return true;
-		}
-	}
-	return false;
-}
-
-const getFirstPartFromNodeModules = function(resolved) {
-	const nodeModulesDir = sep + 'node_modules';
-
-	if (-1 !== resolved.indexOf(nodeModulesDir)) {
-		const parts = resolved.split(nodeModulesDir);
-		if (parts.length) {
-			return parts[0];
-		}
-	}
-
-	return null;
-}
-
-// Resolver
-module.exports = function resolve(dirname) {
-	// Check for environmental variable
-	if (process.env.APP_ROOT_PATH) {
-		return path.resolve(process.env.APP_ROOT_PATH);
-	}
-
-	// Defer to Yarn Plug'n'Play if enabled
-	if (process.versions.pnp) {
-		try {
-			var pnp = requireFunction('pnpapi');
-			return pnp.getPackageInformation(pnp.topLevel).packageLocation;
-		} catch (e) {}
-	}
-
-	// Defer to main process in electron renderer
-	if ('undefined' !== typeof window && window.process && 'renderer' === window.process.type) {
-		try {
-			var remote = requireFunction('electron').remote;
-			return remote.require('app-root-path').path;
-		} catch (e) {}
-	}
-
-	// Defer to AWS Lambda when executing there
-	if (process.env.LAMBDA_TASK_ROOT && process.env.AWS_EXECUTION_ENV) {
-		return process.env.LAMBDA_TASK_ROOT;
-	}
-
-	var resolved = path.resolve(dirname);
-	var alternateMethod = false;
-	var appRootPath = null;
-
-	// Check if the globalPaths contain some folders with '.pnpm' in the path
-	// If yes this means it is most likely installed with pnpm
-	if (isInstalledWithPNPM(resolved)) {
-		appRootPath = getFirstPartFromNodeModules(resolved);
-
-		if (appRootPath) {
-			return appRootPath;
-		}
-	}
-
-	// Make sure that we're not loaded from a global include path
-	// Eg. $HOME/.node_modules
-	//     $HOME/.node_libraries
-	//     $PREFIX/lib/node
-	globalPaths.forEach(function(globalPath) {
-		if (!alternateMethod && 0 === resolved.indexOf(globalPath)) {
-			alternateMethod = true;
-		}
-	});
-
-	// If the app-root-path library isn't loaded globally,
-	// and node_modules exists in the path, just split __dirname
-	if (!alternateMethod) {
-		appRootPath = getFirstPartFromNodeModules(resolved);
-	}
-
-	// If the above didn't work, or this module is loaded globally, then
-	// resort to require.main.filename (See http://nodejs.org/api/modules.html)
-	if (alternateMethod || null == appRootPath) {
-		appRootPath = path.dirname(requireFunction.main.filename);
-	}
-
-	// Handle global bin/ directory edge-case
-	if (alternateMethod && -1 !== appRootPath.indexOf(npmGlobalModuleDir) && (appRootPath.length - 4) === appRootPath.indexOf(sep + 'bin')) {
-		appRootPath = appRootPath.slice(0, -4);
-	}
-
-	// Return
-	return appRootPath;
-};
-
-
-/***/ }),
-
 /***/ 3682:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -9066,14 +8889,6 @@ module.exports = require("https");
 
 /***/ }),
 
-/***/ 8188:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("module");
-
-/***/ }),
-
 /***/ 1808:
 /***/ ((module) => {
 
@@ -9161,10 +8976,10 @@ const { initInputs } = __nccwpck_require__(9962)
 
 async function run() {
   // Initialise the GitHub action inputs
-  const { token, pattern, scanDir } = initInputs()
+  const { token, pattern, workspace, scanDir } = initInputs()
 
   // Scan the repository
-  const filesList = getFilesMatchingPattern(pattern, scanDir)
+  const filesList = getFilesMatchingPattern(pattern, workspace, scanDir)
   if (filesList.length === 0) {
     logInfo(
       `Pattern "${pattern}" not found in the source code. Nothing else to do.`
@@ -9227,14 +9042,16 @@ const core = __nccwpck_require__(2186)
 
 const inputs = {
   token: null,
-  currentBranch: null,
+  workspace: null,
+  branch: null,
   pattern: null,
   scanDir: null
 }
 
 function initInputs() {
   inputs.token = core.getInput('github-token', { required: true })
-  inputs.currentBranch = core.getInput('current-branch', { required: true })
+  inputs.workspace = core.getInput('github-workspace', { required: true })
+  inputs.branch = core.getInput('github-branch', { required: true })
   inputs.pattern = core.getInput('pattern', { required: false })
   inputs.scanDir = core.getInput('scan-dir', { required: false })
   return inputs
@@ -9364,19 +9181,15 @@ exports.logWarning = log(warning)
 
 
 const { execSync } = __nccwpck_require__(2081)
-const appRoot = __nccwpck_require__(4808)
 
 const { logError } = __nccwpck_require__(7739)
 const { buildUrl } = __nccwpck_require__(7880)
 
-function getFilesMatchingPattern(pattern, scanDir) {
+function getFilesMatchingPattern(pattern, workspace, scanDir) {
   try {
-    console.log(
-      'git rev-parse --show-toplevel: ' +
-        execSync('git rev-parse --show-toplevel')
-    )
+    console.log('WORKSPACE: ' + workspace)
     const filesMatchingPattern = execSync(
-      `grep -rl --exclude-dir=node_modules "${pattern}" ${appRoot}/${scanDir}`,
+      `grep -rl --exclude-dir=node_modules "${pattern}" ${workspace}/${scanDir}`,
       {
         encoding: 'utf8'
       }
@@ -9440,23 +9253,25 @@ module.exports = {
 
 "use strict";
 
-const appRoot = __nccwpck_require__(4808)
 const github = __nccwpck_require__(5438)
 const { getInputs } = __nccwpck_require__(9962)
 
 async function buildUrl(file, line) {
-  const { currentBranch } = getInputs()
+  const { workspace, branch } = getInputs()
   const { owner, repo } = github.context.repo
 
-  const relativeFilePath = getRelativeFilePath(file)
+  console.log('buildUrl - owner: ' + owner)
+  console.log('buildUrl - repo: ' + repo)
 
-  const uri = `https://github.com/${owner}/${repo}/blob/${currentBranch}/${relativeFilePath}?plain=1#L${line}`
+  const relativeFilePath = getRelativeFilePath(file, workspace)
+
+  const uri = `https://github.com/${owner}/${repo}/blob/${branch}/${relativeFilePath}?plain=1#L${line}`
 
   return uri
 }
 
-function getRelativeFilePath(file) {
-  return file.replace(appRoot, '')
+function getRelativeFilePath(file, workspace) {
+  return file.replace(workspace, '')
 }
 
 module.exports = {

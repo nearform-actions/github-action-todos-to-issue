@@ -9,10 +9,10 @@ const { initInputs } = require('./inputs')
 
 async function run() {
   // Initialise the GitHub action inputs
-  const { token, pattern, scanDir } = initInputs()
+  const { token, pattern, workspace, scanDir } = initInputs()
 
   // Scan the repository
-  const filesList = getFilesMatchingPattern(pattern, scanDir)
+  const filesList = getFilesMatchingPattern(pattern, workspace, scanDir)
   if (filesList.length === 0) {
     logInfo(
       `Pattern "${pattern}" not found in the source code. Nothing else to do.`
