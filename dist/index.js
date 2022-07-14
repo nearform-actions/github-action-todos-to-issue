@@ -9191,7 +9191,8 @@ function getFilesMatchingPattern(pattern, workspace, scanDir) {
 
     console.log(execSync('ls -al', { encoding: 'utf8' }))
 
-    let bashCommand = `grep -rl --exclude-dir={node_modules,.github} "${pattern}" ${workspace}/${scanDir}`
+    //let bashCommand = `grep --exclude-dir={node_modules,.github} -rl ${workspace}/${scanDir} -e "${pattern}"`
+    const bashCommand = `find ./${scanDir} -type f \\( -name '*.js' -o -name '*.ts' \\) ! -path './node_modules/*' ! -path './.*' -exec grep -rl '${pattern}' {} \\;`
     const filesMatchingPattern = execSync(bashCommand, {
       encoding: 'utf8'
     })
