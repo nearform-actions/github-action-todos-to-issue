@@ -2,12 +2,9 @@
 const github = require('@actions/github')
 const { getInputs } = require('./inputs')
 
-async function buildUrl(file, line) {
+function buildUrl(file, line) {
   const { workspace, branch } = getInputs()
   const { owner, repo } = github.context.repo
-
-  console.log('buildUrl - owner: ' + owner)
-  console.log('buildUrl - repo: ' + repo)
 
   const relativeFilePath = getRelativeFilePath(file, workspace)
 

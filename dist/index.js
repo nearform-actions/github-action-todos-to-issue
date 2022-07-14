@@ -9188,18 +9188,17 @@ const { buildUrl } = __nccwpck_require__(7880)
 function getFilesMatchingPattern(pattern, workspace, scanDir) {
   try {
     console.log('WORKSPACE: ' + workspace)
-    const filesMatchingPattern = execSync(
-      `grep -rl --exclude-dir=node_modules "${pattern}" ${workspace}/${scanDir}`,
-      {
-        encoding: 'utf8'
-      }
-    )
+    let grepCommand = `grep -rl --exclude-dir={node_modules,'.?*'} "${pattern}" ${workspace}`
+    if (scanDir !== '.') {
+      grepCommand += `/${scanDir}`
+    }
+    const filesMatchingPattern = execSync(grepCommand, {
+      encoding: 'utf8'
+    })
       .split('\n')
       .filter(file => file)
 
-    console.log(
-      `COMMAND: grep -rl --exclude-dir=node_modules "${pattern}" ${workspace}/${scanDir}`
-    )
+    console.log(`COMMAND: ${grepCommand}`)
     console.log(
       'FILES MATCHING PATTERN: ' + JSON.stringify(filesMatchingPattern)
     )
@@ -9263,12 +9262,9 @@ module.exports = {
 const github = __nccwpck_require__(5438)
 const { getInputs } = __nccwpck_require__(9962)
 
-async function buildUrl(file, line) {
+function buildUrl(file, line) {
   const { workspace, branch } = getInputs()
   const { owner, repo } = github.context.repo
-
-  console.log('buildUrl - owner: ' + owner)
-  console.log('buildUrl - repo: ' + repo)
 
   const relativeFilePath = getRelativeFilePath(file, workspace)
 
