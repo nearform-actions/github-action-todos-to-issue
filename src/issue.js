@@ -64,8 +64,9 @@ async function create(token, body) {
 async function publishIssue(token, body) {
   let issue = await getLastOpenIssue(token)
   if (issue) {
+    console.log('before ISSUE: ' + JSON.stringify(issue))
     issue = await update(token, body, issue.number)
-    console.log('ISSUE: ' + JSON.stringify(issue))
+    console.log('after ISSUE: ' + JSON.stringify(issue))
     logInfo(`Existing TODOs issue ${issue.number} has been updated.`)
   } else {
     issue = await create(token, body)
