@@ -9188,17 +9188,17 @@ const { buildUrl } = __nccwpck_require__(7880)
 function getFilesMatchingPattern(pattern, workspace, scanDir) {
   try {
     console.log('WORKSPACE: ' + workspace)
-    let grepCommand = `grep -rl --exclude-dir={node_modules,'.?*'} "${pattern}" ${workspace}`
+    let bashCommand = `cd ${workspace} && grep -rl --exclude-dir={node_modules,'.?*'} "${pattern}" ${workspace}`
     if (scanDir !== '.') {
-      grepCommand += `/${scanDir}`
+      bashCommand += `/${scanDir}`
     }
-    const filesMatchingPattern = execSync(grepCommand, {
+    const filesMatchingPattern = execSync(bashCommand, {
       encoding: 'utf8'
     })
       .split('\n')
       .filter(file => file)
 
-    console.log(`COMMAND: ${grepCommand}`)
+    console.log(`COMMAND: ${bashCommand}`)
     console.log(
       'FILES MATCHING PATTERN: ' + JSON.stringify(filesMatchingPattern)
     )
@@ -9268,7 +9268,7 @@ function buildUrl(file, line) {
 
   const relativeFilePath = getRelativeFilePath(file, workspace)
 
-  const uri = `https://github.com/${owner}/${repo}/blob/${branch}/${relativeFilePath}?plain=1#L${line}`
+  const uri = `https://github.com/${owner}/${repo}/blob/${branch}${relativeFilePath}?plain=1#L${line}`
 
   return uri
 }

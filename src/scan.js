@@ -8,17 +8,17 @@ const { buildUrl } = require('./utils')
 function getFilesMatchingPattern(pattern, workspace, scanDir) {
   try {
     console.log('WORKSPACE: ' + workspace)
-    let grepCommand = `grep -rl --exclude-dir={node_modules,'.?*'} "${pattern}" ${workspace}`
+    let bashCommand = `cd ${workspace} && grep -rl --exclude-dir={node_modules,'.?*'} "${pattern}" ${workspace}`
     if (scanDir !== '.') {
-      grepCommand += `/${scanDir}`
+      bashCommand += `/${scanDir}`
     }
-    const filesMatchingPattern = execSync(grepCommand, {
+    const filesMatchingPattern = execSync(bashCommand, {
       encoding: 'utf8'
     })
       .split('\n')
       .filter(file => file)
 
-    console.log(`COMMAND: ${grepCommand}`)
+    console.log(`COMMAND: ${bashCommand}`)
     console.log(
       'FILES MATCHING PATTERN: ' + JSON.stringify(filesMatchingPattern)
     )
