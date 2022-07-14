@@ -3,7 +3,11 @@
 const { execSync } = require('child_process')
 
 const { logError } = require('./log')
-const { buildFileMatchingPatternCommand, buildUrl } = require('./utils')
+const {
+  buildFileMatchingPatternCommand,
+  buildOccurrenciesCommand,
+  buildUrl
+} = require('./utils')
 
 function getFilesMatchingPattern(
   pattern,
@@ -28,7 +32,8 @@ function getFilesMatchingPattern(
 
 function findOccurrencies(file, pattern) {
   try {
-    const occurrencies = execSync(`grep -n ${pattern} ${file}`, {
+    const occurrenciesCommand = buildOccurrenciesCommand(pattern, file)
+    const occurrencies = execSync(occurrenciesCommand, {
       encoding: 'utf8'
     })
       .split('\n')

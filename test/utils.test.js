@@ -35,7 +35,7 @@ describe('buildFileMatchingPatternCommand', () => {
       TEST_SCAN_EXTENSIONS
     )
     const expected =
-      'find . -type f \\( -name "*.js" -o -name "*.ts" -o -name "*.cjs" -o -name "*.mjs" \\) ! -path "./node_modules/*" ! -path "./.github/*" -exec grep -rl "TODO" {} \\;'
+      'find . -type f \\( -name "*.js" -o -name "*.ts" -o -name "*.cjs" -o -name "*.mjs" \\) ! -path "./node_modules/*" ! -path "./.github/*" -exec grep -rl -e "TODO:" -e "// TODO" {} \\;'
 
     expect(cmd).toStrictEqual(expected)
   })
@@ -48,7 +48,7 @@ describe('buildFileMatchingPatternCommand', () => {
       TEST_SCAN_EXTENSIONS
     )
     const expected =
-      'find . -type f \\( -name "*.js" -o -name "*.ts" -o -name "*.cjs" -o -name "*.mjs" \\) ! -path "./node_modules/*" -exec grep -rl "TODO" {} \\;'
+      'find . -type f \\( -name "*.js" -o -name "*.ts" -o -name "*.cjs" -o -name "*.mjs" \\) ! -path "./node_modules/*" -exec grep -rl -e "TODO:" -e "// TODO" {} \\;'
 
     expect(cmd).toStrictEqual(expected)
   })
@@ -61,7 +61,7 @@ describe('buildFileMatchingPatternCommand', () => {
       '.js'
     )
     const expected =
-      'find . -type f \\( -name "*.js" \\) ! -path "./node_modules/*" ! -path "./.github/*" -exec grep -rl "TODO" {} \\;'
+      'find . -type f \\( -name "*.js" \\) ! -path "./node_modules/*" ! -path "./.github/*" -exec grep -rl -e "TODO:" -e "// TODO" {} \\;'
 
     expect(cmd).toStrictEqual(expected)
   })
@@ -74,7 +74,7 @@ describe('buildFileMatchingPatternCommand', () => {
       '.js'
     )
     const expected =
-      'find . -type f \\( -name "*.js" \\) ! -path "./node_modules/*" -exec grep -rl "TODO" {} \\;'
+      'find . -type f \\( -name "*.js" \\) ! -path "./node_modules/*" -exec grep -rl -e "TODO:" -e "// TODO" {} \\;'
 
     expect(cmd).toStrictEqual(expected)
   })

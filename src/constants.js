@@ -9,7 +9,7 @@ const ISSUE_STATE_CLOSED = 'closed'
 /**
  * Tests
  */
-const TEST_PATTERN = 'TODO'
+const TEST_PATTERN = 'TODO:,// TODO'
 const TEST_DEFAULT_SCAN_DIR = '.'
 const TEST_EXCLUDE_DIRS = 'node_modules,.github'
 const TEST_SCAN_EXTENSIONS = '.js,.ts,.cjs,.mjs'

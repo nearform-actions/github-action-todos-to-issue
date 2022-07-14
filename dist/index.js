@@ -9024,7 +9024,7 @@ const ISSUE_STATE_CLOSED = 'closed'
 /**
  * Tests
  */
-const TEST_PATTERN = 'TODO'
+const TEST_PATTERN = 'TODO:,// TODO'
 const TEST_DEFAULT_SCAN_DIR = '.'
 const TEST_EXCLUDE_DIRS = 'node_modules,.github'
 const TEST_SCAN_EXTENSIONS = '.js,.ts,.cjs,.mjs'
@@ -9199,7 +9199,11 @@ exports.logWarning = log(warning)
 const { execSync } = __nccwpck_require__(2081)
 
 const { logError } = __nccwpck_require__(7739)
-const { buildFileMatchingPatternCommand, buildUrl } = __nccwpck_require__(7880)
+const {
+  buildFileMatchingPatternCommand,
+  buildOccurrenciesCommand,
+  buildUrl
+} = __nccwpck_require__(7880)
 
 function getFilesMatchingPattern(
   pattern,
@@ -9224,7 +9228,8 @@ function getFilesMatchingPattern(
 
 function findOccurrencies(file, pattern) {
   try {
-    const occurrencies = execSync(`grep -n ${pattern} ${file}`, {
+    const occurrenciesCommand = buildOccurrenciesCommand(pattern, file)
+    const occurrencies = execSync(occurrenciesCommand, {
       encoding: 'utf8'
     })
       .split('\n')
@@ -9280,6 +9285,12 @@ function buildFileMatchingPatternCommand(
   excludeDirs,
   scanExtensions
 ) {
+  const patternCmd = pattern
+    .split(',')
+    .filter(ptrn => ptrn)
+    .map(ptrn => `-e "${ptrn}"`)
+    .join(' ')
+
   const scanExtensionsCmd = scanExtensions
     .split(',')
     .filter(ext => ext)
@@ -9292,7 +9303,17 @@ function buildFileMatchingPatternCommand(
     .map(dir => `! -path "./${dir}/*"`)
     .join(' ')
 
-  return `find ${scanDir} -type f \\( ${scanExtensionsCmd} \\) ${excludeDirsCmd} -exec grep -rl "${pattern}" {} \\;`
+  return `find ${scanDir} -type f \\( ${scanExtensionsCmd} \\) ${excludeDirsCmd} -exec grep -rl ${patternCmd} {} \\;`
+}
+
+function buildOccurrenciesCommand(pattern, file) {
+  const patternCmd = pattern
+    .split(',')
+    .filter(ptrn => ptrn)
+    .map(ptrn => `-e "${ptrn}"`)
+    .join(' ')
+
+  return `grep -n ${patternCmd} ${file}`
 }
 
 function buildUrl(file, line) {
@@ -9306,6 +9327,7 @@ function buildUrl(file, line) {
 
 module.exports = {
   buildFileMatchingPatternCommand,
+  buildOccurrenciesCommand,
   buildUrl
 }
 

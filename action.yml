@@ -14,7 +14,7 @@ inputs:
   pattern:
     description: 'Pattern to match'
     required: false
-    default: 'TODO'
+    default: 'TODO:,// TODO'
   scan-dir:
     description: 'Scan directory'
     required: false

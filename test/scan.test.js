@@ -30,9 +30,11 @@ describe('getFilesMatchingPattern', () => {
     )
     const expectedFilesList = [
       `${TEST_MATCHING_DIR}/sample1.js`,
+      `${TEST_MATCHING_DIR}/sampleFile.ts`,
       `${TEST_MATCHING_DIR}/sample2.js`
     ]
-    expect(filesList).toEqual(expect.arrayContaining(expectedFilesList))
+
+    expect(filesList).toStrictEqual(expectedFilesList)
   })
 
   it('should return an empty array if no files are found with the specified pattern', () => {
