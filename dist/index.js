@@ -9371,6 +9371,10 @@ const { buildUrl } = __nccwpck_require__(7880)
 
 function getFilesMatchingPattern(pattern, scanDir) {
   try {
+    console.log(
+      'git rev-parse --show-toplevel: ' +
+        execSync('git rev-parse --show-toplevel')
+    )
     const filesMatchingPattern = execSync(
       `grep -rl --exclude-dir=node_modules "${pattern}" ${appRoot}/${scanDir}`,
       {
