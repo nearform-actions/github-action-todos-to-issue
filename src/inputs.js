@@ -6,7 +6,9 @@ const inputs = {
   workspace: null,
   branch: null,
   pattern: null,
-  scanDir: null
+  scanDir: null,
+  excludeDirs: null,
+  scanExtensions: null
 }
 
 function initInputs() {
@@ -15,6 +17,8 @@ function initInputs() {
   inputs.branch = core.getInput('github-branch', { required: true })
   inputs.pattern = core.getInput('pattern', { required: false })
   inputs.scanDir = core.getInput('scan-dir', { required: false })
+  inputs.excludeDirs = core.getInput('exclude-dirs', { required: false })
+  inputs.scanExtensions = core.getInput('scan-extensions', { required: false })
   return inputs
 }
 

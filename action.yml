@@ -22,6 +22,14 @@ inputs:
     description: 'Scan directory'
     required: false
     default: '.'
+  exclude-dirs:
+    description: 'Directories to exclude during the scan'
+    required: false
+    default: 'node_modules,.github'
+  scan-extensions:
+    description: 'Specify the files extensions to scan'
+    required: false
+    default: '.js,.ts,.cjs,.mjs'
 
 
 runs:

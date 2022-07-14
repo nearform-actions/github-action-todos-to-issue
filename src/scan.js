@@ -3,16 +3,23 @@
 const { execSync } = require('child_process')
 
 const { logError } = require('./log')
-const { buildUrl } = require('./utils')
+const { buildFileMatchingPatternCommand, buildUrl } = require('./utils')
 
-function getFilesMatchingPattern(pattern, workspace, scanDir) {
+function getFilesMatchingPattern(
+  pattern,
+  scanDir,
+  excludeDirs,
+  scanExtensions
+) {
   try {
-    console.log('WORKSPACE: ' + workspace)
-
     console.log(execSync('ls -al', { encoding: 'utf8' }))
 
-    //let bashCommand = `grep --exclude-dir={node_modules,.github} -rl ${workspace}/${scanDir} -e "${pattern}"`
-    const bashCommand = `find ${scanDir} -type f \\( -name "*.js" -o -name "*.ts" \\) ! -path "./node_modules/*" ! -path "./.*" -exec grep -rl "${pattern}" {} \\;`
+    const bashCommand = buildFileMatchingPatternCommand(
+      pattern,
+      scanDir,
+      excludeDirs,
+      scanExtensions
+    )
     const filesMatchingPattern = execSync(bashCommand, {
       encoding: 'utf8'
     })

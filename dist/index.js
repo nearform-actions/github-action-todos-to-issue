@@ -8976,10 +8976,15 @@ const { initInputs } = __nccwpck_require__(9962)
 
 async function run() {
   // Initialise the GitHub action inputs
-  const { token, pattern, workspace, scanDir } = initInputs()
+  const { token, pattern, scanDir, excludeDirs, scanExtensions } = initInputs()
 
   // Scan the repository
-  const filesList = getFilesMatchingPattern(pattern, workspace, scanDir)
+  const filesList = getFilesMatchingPattern(
+    pattern,
+    scanDir,
+    excludeDirs,
+    scanExtensions
+  )
   if (filesList.length === 0) {
     logInfo(
       `Pattern "${pattern}" not found in the source code. Nothing else to do.`
@@ -9045,7 +9050,9 @@ const inputs = {
   workspace: null,
   branch: null,
   pattern: null,
-  scanDir: null
+  scanDir: null,
+  excludeDirs: null,
+  scanExtensions: null
 }
 
 function initInputs() {
@@ -9054,6 +9061,8 @@ function initInputs() {
   inputs.branch = core.getInput('github-branch', { required: true })
   inputs.pattern = core.getInput('pattern', { required: false })
   inputs.scanDir = core.getInput('scan-dir', { required: false })
+  inputs.excludeDirs = core.getInput('exclude-dirs', { required: false })
+  inputs.scanExtensions = core.getInput('scan-extensions', { required: false })
   return inputs
 }
 
@@ -9183,16 +9192,23 @@ exports.logWarning = log(warning)
 const { execSync } = __nccwpck_require__(2081)
 
 const { logError } = __nccwpck_require__(7739)
-const { buildUrl } = __nccwpck_require__(7880)
+const { buildFileMatchingPatternCommand, buildUrl } = __nccwpck_require__(7880)
 
-function getFilesMatchingPattern(pattern, workspace, scanDir) {
+function getFilesMatchingPattern(
+  pattern,
+  scanDir,
+  excludeDirs,
+  scanExtensions
+) {
   try {
-    console.log('WORKSPACE: ' + workspace)
-
     console.log(execSync('ls -al', { encoding: 'utf8' }))
 
-    //let bashCommand = `grep --exclude-dir={node_modules,.github} -rl ${workspace}/${scanDir} -e "${pattern}"`
-    const bashCommand = `find ${scanDir} -type f \\( -name "*.js" -o -name "*.ts" \\) ! -path "./node_modules/*" ! -path "./.*" -exec grep -rl "${pattern}" {} \\;`
+    const bashCommand = buildFileMatchingPatternCommand(
+      pattern,
+      scanDir,
+      excludeDirs,
+      scanExtensions
+    )
     const filesMatchingPattern = execSync(bashCommand, {
       encoding: 'utf8'
     })
@@ -9263,22 +9279,40 @@ module.exports = {
 const github = __nccwpck_require__(5438)
 const { getInputs } = __nccwpck_require__(9962)
 
+function buildFileMatchingPatternCommand(
+  pattern,
+  scanDir,
+  excludeDirs,
+  scanExtensions
+) {
+  const scanExtensionsCmd = scanExtensions
+    .split(',')
+    .filter(ext => ext)
+    .map(ext => `-name "*${ext}"`)
+    .join(' -o ')
+
+  const excludeDirsCmd = excludeDirs
+    .split(',')
+    .filter(dir => dir)
+    .map(dir => `! -path "./${dir}/*`)
+    .join(' ')
+
+  return `find ${scanDir} -type f \\( ${scanExtensionsCmd} \\) ${excludeDirsCmd} -exec grep -rl "${pattern}" {} \\;`
+}
+
 function buildUrl(file, line) {
-  const { workspace, branch } = getInputs()
+  const { branch } = getInputs()
   const { owner, repo } = github.context.repo
 
-  const relativeFilePath = getRelativeFilePath(file, workspace)
+  //const relativeFilePath = getRelativeFilePath(file, workspace)
 
-  const uri = `https://github.com/${owner}/${repo}/blob/${branch}/${relativeFilePath}?plain=1#L${line}`
+  const uri = `https://github.com/${owner}/${repo}/blob/${branch}/${file}?plain=1#L${line}`
 
   return uri
 }
 
-function getRelativeFilePath(file, workspace) {
-  return file.replace(workspace, '')
-}
-
 module.exports = {
+  buildFileMatchingPatternCommand,
   buildUrl
 }
 
