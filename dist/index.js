@@ -9191,7 +9191,7 @@ function getFilesMatchingPattern(pattern, workspace, scanDir) {
 
     console.log(execSync('ls -al', { encoding: 'utf8' }))
 
-    let bashCommand = `cd ${workspace} && grep -rl --exclude-dir={node_modules,'.?*'} "${pattern}" ${scanDir}`
+    let bashCommand = `grep -rl --exclude-dir={node_modules,.github} "${pattern}" ${workspace}/${scanDir}`
     const filesMatchingPattern = execSync(bashCommand, {
       encoding: 'utf8'
     })
@@ -9268,7 +9268,7 @@ function buildUrl(file, line) {
 
   const relativeFilePath = getRelativeFilePath(file, workspace)
 
-  const uri = `https://github.com/${owner}/${repo}/blob/${branch}${relativeFilePath}?plain=1#L${line}`
+  const uri = `https://github.com/${owner}/${repo}/blob/${branch}/${relativeFilePath}?plain=1#L${line}`
 
   return uri
 }

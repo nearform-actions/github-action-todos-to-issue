@@ -8,7 +8,7 @@ function buildUrl(file, line) {
 
   const relativeFilePath = getRelativeFilePath(file, workspace)
 
-  const uri = `https://github.com/${owner}/${repo}/blob/${branch}${relativeFilePath}?plain=1#L${line}`
+  const uri = `https://github.com/${owner}/${repo}/blob/${branch}/${relativeFilePath}?plain=1#L${line}`
 
   return uri
 }
