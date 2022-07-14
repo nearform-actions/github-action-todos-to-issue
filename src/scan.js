@@ -8,10 +8,10 @@ const { buildUrl } = require('./utils')
 function getFilesMatchingPattern(pattern, workspace, scanDir) {
   try {
     console.log('WORKSPACE: ' + workspace)
-    let bashCommand = `cd ${workspace} && grep -rl --exclude-dir={node_modules,'.?*'} "${pattern}" ${workspace}`
-    if (scanDir !== '.') {
-      bashCommand += `/${scanDir}`
-    }
+
+    console.log(execSync('ls -al', { encoding: 'utf8' }))
+
+    let bashCommand = `cd ${workspace} && grep -rl --exclude-dir={node_modules,'.?*'} "${pattern}" ${scanDir}`
     const filesMatchingPattern = execSync(bashCommand, {
       encoding: 'utf8'
     })
