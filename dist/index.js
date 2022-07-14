@@ -9197,6 +9197,13 @@ function getFilesMatchingPattern(pattern, workspace, scanDir) {
       .split('\n')
       .filter(file => file)
 
+    console.log(
+      `COMMAND: grep -rl --exclude-dir=node_modules "${pattern}" ${workspace}/${scanDir}`
+    )
+    console.log(
+      'FILES MATCHING PATTERN: ' + JSON.stringify(filesMatchingPattern)
+    )
+
     return filesMatchingPattern
   } catch (err) {
     logError(err)
