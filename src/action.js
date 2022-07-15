@@ -5,6 +5,10 @@ const { logInfo } = require('./log')
 const { getFilesMatchingPattern, findOccurrences } = require('./scan')
 const { publishIssue, renderIssueBody } = require('./issue')
 
+/**
+ * Starting point for the action
+ * @returns Promise<void>
+ */
 async function run() {
   // Initialise the GitHub action inputs
   const token = core.getInput('github-token', { required: true })

@@ -1,50 +1,64 @@
-const { getOctokit } = require('@actions/github')
+'use strict'
+
+const { test } = require('tap')
+const sinon = require('sinon')
+const github = require('@actions/github')
+
 const { publishIssue } = require('../src/issue')
+const {
+  TEST_GITHUB_FAKE_VALUES,
+  TEST_TOKEN,
+  TEST_ISSUE_BODY,
+  TEST_ISSUE_NUMBER,
+  TEST_GITHUB_CONTEXT,
+  TEST_GITHUB_GET_OCTOKIT
+} = require('./constants')
 
-const token = 'token'
-const owner = 'owner'
-const repo = 'repository'
-
-jest.mock('../src/log', () => ({
-  logInfo: jest.fn()
-}))
-
-jest.mock('@actions/github', () => ({
-  getOctokit: jest.fn(),
-  context: { repo: { owner, repo } }
-}))
-
-beforeEach(() => {
-  jest.resetModules()
-})
-
-describe('publishIssue', () => {
-  it('should create an issue if not already present', async () => {
-    getOctokit.mockReturnValue({
-      request: async () => ({ data: [] }),
-      rest: { issues: { create: async () => ({ data: { number: 1 } }) } }
-    })
-
-    const issue = await publishIssue(token, 'sample body')
-
-    expect(issue.number).toStrictEqual(1)
+test('publishIssue', t => {
+  t.beforeEach(() => {
+    sinon.stub(github, TEST_GITHUB_CONTEXT).value(TEST_GITHUB_FAKE_VALUES)
+  })
+  t.afterEach(() => {
+    sinon.restore()
   })
 
-  it('should update the issue if already present', async () => {
-    const body = 'updated body'
-    const issueNumber = 1
-    getOctokit.mockReturnValue({
-      request: async () => ({ data: [{ number: issueNumber }] }),
+  t.plan(2)
+
+  t.test('should create an issue if not already present', async t => {
+    t.plan(2)
+
+    sinon.stub(github, TEST_GITHUB_GET_OCTOKIT).returns({
+      request: async () => ({ data: [] }),
       rest: {
         issues: {
-          update: async () => ({ data: { number: issueNumber, body } })
+          create: async () => ({
+            data: { number: TEST_ISSUE_NUMBER, body: TEST_ISSUE_BODY }
+          })
         }
       }
     })
 
-    const issue = await publishIssue(token, body)
+    const issue = await publishIssue(TEST_TOKEN, TEST_ISSUE_BODY)
+    t.equal(issue.number, TEST_ISSUE_NUMBER)
+    t.equal(issue.body, TEST_ISSUE_BODY)
+  })
 
-    expect(issue.number).toStrictEqual(issueNumber)
-    expect(issue.body).toStrictEqual(body)
+  t.test('should update the issue if already present', async t => {
+    t.plan(2)
+
+    sinon.stub(github, TEST_GITHUB_GET_OCTOKIT).returns({
+      request: async () => ({ data: [{ number: TEST_ISSUE_NUMBER }] }),
+      rest: {
+        issues: {
+          update: async () => ({
+            data: { number: TEST_ISSUE_NUMBER, body: TEST_ISSUE_BODY }
+          })
+        }
+      }
+    })
+
+    const issue = await publishIssue(TEST_TOKEN, TEST_ISSUE_BODY)
+    t.equal(issue.number, TEST_ISSUE_NUMBER)
+    t.equal(issue.body, TEST_ISSUE_BODY)
   })
 })

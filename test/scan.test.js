@@ -1,67 +1,73 @@
+const { test } = require('tap')
+const sinon = require('sinon')
+const github = require('@actions/github')
+
+const { getFilesMatchingPattern, findOccurrences } = require('../src/scan')
 const {
+  TEST_GITHUB_FAKE_VALUES,
   TEST_PATTERN,
   TEST_MATCHING_DIR,
   TEST_NOT_MATCHING_DIR,
-  TEST_EXCLUDE_DIRS,
-  TEST_SCAN_EXTENSIONS
-} = require('../test/constants')
-const { getFilesMatchingPattern, findOccurrences } = require('../src/scan')
+  TEST_FILE,
+  TEST_GITHUB_CONTEXT
+} = require('./constants')
 
-jest.mock('@actions/github', () => ({
-  context: {
-    repo: {
-      owner: 'owner',
-      repo: 'repository'
+test('getFilesMatchingPattern', t => {
+  t.plan(2)
+
+  t.test(
+    'should return the list of files matching with the specified pattern',
+    t => {
+      t.plan(1)
+
+      const filesList = getFilesMatchingPattern(TEST_PATTERN, TEST_MATCHING_DIR)
+      const expectedFilesList = [
+        `${TEST_MATCHING_DIR}/sample1.js`,
+        `${TEST_MATCHING_DIR}/sample2.js`,
+        `${TEST_MATCHING_DIR}/sample3.ts`
+      ]
+
+      t.same(filesList.sort(), expectedFilesList.sort())
     }
-  }
-}))
+  )
 
-beforeEach(() => {
-  jest.resetModules()
+  t.test(
+    'should return an empty array if no files are found with the specified pattern',
+    t => {
+      t.plan(1)
+
+      const filesList = getFilesMatchingPattern(
+        TEST_PATTERN,
+        TEST_NOT_MATCHING_DIR
+      )
+
+      t.same(filesList, [])
+    }
+  )
 })
 
-describe('getFilesMatchingPattern', () => {
-  it('should return the list of files matching with the specified pattern', () => {
-    const filesList = getFilesMatchingPattern(
-      TEST_PATTERN,
-      TEST_MATCHING_DIR,
-      TEST_EXCLUDE_DIRS,
-      TEST_SCAN_EXTENSIONS
-    )
-    const expectedFilesList = [
-      `${TEST_MATCHING_DIR}/sample1.js`,
-      `${TEST_MATCHING_DIR}/sampleFile.ts`,
-      `${TEST_MATCHING_DIR}/sample2.js`
-    ]
-
-    expect(filesList.sort()).toEqual(expectedFilesList.sort())
+test('findOccurrences', t => {
+  t.beforeEach(() => {
+    sinon.stub(github, TEST_GITHUB_CONTEXT).value(TEST_GITHUB_FAKE_VALUES)
+  })
+  t.afterEach(() => {
+    sinon.restore()
   })
 
-  it('should return an empty array if no files are found with the specified pattern', () => {
-    const filesList = getFilesMatchingPattern(
-      TEST_PATTERN,
-      TEST_NOT_MATCHING_DIR,
-      TEST_EXCLUDE_DIRS,
-      TEST_SCAN_EXTENSIONS
-    )
-    expect(filesList).toStrictEqual([])
-  })
-})
+  t.plan(1)
 
-describe('findOccurrences', () => {
-  it('should return the list of occurrences with the line number and the comment', () => {
-    const result = findOccurrences(
-      `${TEST_MATCHING_DIR}/sample1.js`,
-      TEST_PATTERN
-    )
+  t.test(
+    'should return the list of occurrences with the line number and the comment',
+    t => {
+      t.plan(5)
 
-    expect(result).toHaveProperty('file')
-    expect(result).toHaveProperty('occurrences')
-    expect(result.file).toBe(`${TEST_MATCHING_DIR}/sample1.js`)
-    expect(result.occurrences).toHaveLength(2)
-    result.occurrences.forEach(occurrence => {
-      expect(occurrence).toHaveProperty('line')
-      expect(occurrence).toHaveProperty('comment')
-    })
-  })
+      const result = findOccurrences(TEST_FILE, TEST_PATTERN)
+      t.hasProps(result, ['file', 'occurrences'])
+      t.equal(result.file, TEST_FILE)
+      t.equal(result.occurrences.length, 2)
+      result.occurrences.forEach(occurrence => {
+        t.hasProps(occurrence, ['line', 'comment', 'url'])
+      })
+    }
+  )
 })

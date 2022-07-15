@@ -17345,6 +17345,10 @@ const { logInfo } = __nccwpck_require__(7739)
 const { getFilesMatchingPattern, findOccurrences } = __nccwpck_require__(3908)
 const { publishIssue, renderIssueBody } = __nccwpck_require__(6644)
 
+/**
+ * Starting point for the action
+ * @returns Promise<void>
+ */
 async function run() {
   // Initialise the GitHub action inputs
   const token = core.getInput('github-token', { required: true })
@@ -17528,6 +17532,12 @@ const {
   buildUrl
 } = __nccwpck_require__(7880)
 
+/**
+ * It returns the list of files matching the specified pattern in the specified directory
+ * @param {string} pattern comma separated pattern
+ * @param {string} scanDir the directory to scan
+ * @returns the list of files matching the specified pattern
+ */
 function getFilesMatchingPattern(pattern, scanDir) {
   const bashCommand = buildFileMatchingPatternCommand(pattern, scanDir)
   const filesMatchingPattern = execSync(bashCommand, {
@@ -17539,6 +17549,12 @@ function getFilesMatchingPattern(pattern, scanDir) {
   return filesMatchingPattern
 }
 
+/**
+ * It returns the occurrences for the specified pattern in the file
+ * @param {string} file location
+ * @param {string} pattern comma separated pattern
+ * @returns the occurrences for the specified pattern in the file
+ */
 function findOccurrences(file, pattern) {
   try {
     const occurrencesCommand = buildOccurrencesCommand(pattern, file)
@@ -17606,7 +17622,7 @@ function buildFileMatchingPatternCommand(pattern, scanDir) {
 /**
  * It builds the find occurrences command using the `grep` command
  * @param {string} pattern comma separated pattern
- * @param {string} file filename
+ * @param {string} file location
  * @returns the find occurrences command
  */
 function buildOccurrencesCommand(pattern, file) {
@@ -17623,7 +17639,7 @@ function buildOccurrencesCommand(pattern, file) {
  */
 function buildUrl(file, line) {
   const { owner, repo } = github.context.repo
-  const branch = github.context.ref
+  const branch = getBranch(github.context.ref)
   const uri = `https://github.com/${owner}/${repo}/blob/${branch}/${file}?plain=1#L${line}`
 
   return uri
@@ -17635,6 +17651,10 @@ function buildPatternCommand(pattern) {
     .filter(ptrn => ptrn)
     .map(ptrn => `-e "${ptrn}"`)
     .join(' ')
+}
+
+function getBranch(ref) {
+  return ref.replace('refs/heads/', '')
 }
 
 module.exports = {

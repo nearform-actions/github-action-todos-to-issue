@@ -16,7 +16,7 @@ function buildFileMatchingPatternCommand(pattern, scanDir) {
 /**
  * It builds the find occurrences command using the `grep` command
  * @param {string} pattern comma separated pattern
- * @param {string} file filename
+ * @param {string} file location
  * @returns the find occurrences command
  */
 function buildOccurrencesCommand(pattern, file) {
@@ -33,7 +33,7 @@ function buildOccurrencesCommand(pattern, file) {
  */
 function buildUrl(file, line) {
   const { owner, repo } = github.context.repo
-  const branch = github.context.ref
+  const branch = getBranch(github.context.ref)
   const uri = `https://github.com/${owner}/${repo}/blob/${branch}/${file}?plain=1#L${line}`
 
   return uri
@@ -45,6 +45,10 @@ function buildPatternCommand(pattern) {
     .filter(ptrn => ptrn)
     .map(ptrn => `-e "${ptrn}"`)
     .join(' ')
+}
+
+function getBranch(ref) {
+  return ref.replace('refs/heads/', '')
 }
 
 module.exports = {

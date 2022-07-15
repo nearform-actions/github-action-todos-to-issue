@@ -9,6 +9,12 @@ const {
   buildUrl
 } = require('./utils')
 
+/**
+ * It returns the list of files matching the specified pattern in the specified directory
+ * @param {string} pattern comma separated pattern
+ * @param {string} scanDir the directory to scan
+ * @returns the list of files matching the specified pattern
+ */
 function getFilesMatchingPattern(pattern, scanDir) {
   const bashCommand = buildFileMatchingPatternCommand(pattern, scanDir)
   const filesMatchingPattern = execSync(bashCommand, {
@@ -20,6 +26,12 @@ function getFilesMatchingPattern(pattern, scanDir) {
   return filesMatchingPattern
 }
 
+/**
+ * It returns the occurrences for the specified pattern in the file
+ * @param {string} file location
+ * @param {string} pattern comma separated pattern
+ * @returns the occurrences for the specified pattern in the file
+ */
 function findOccurrences(file, pattern) {
   try {
     const occurrencesCommand = buildOccurrencesCommand(pattern, file)
