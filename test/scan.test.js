@@ -34,7 +34,7 @@ describe('getFilesMatchingPattern', () => {
       `${TEST_MATCHING_DIR}/sample2.js`
     ]
 
-    expect(filesList).toStrictEqual(expectedFilesList)
+    expect(filesList.sort()).toEqual(expectedFilesList.sort())
   })
 
   it('should return an empty array if no files are found with the specified pattern', () => {
