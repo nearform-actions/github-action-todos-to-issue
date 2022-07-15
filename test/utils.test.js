@@ -1,21 +1,19 @@
-'use strict'
+import { test } from 'tap'
+import sinon from 'sinon'
+import * as github from '@actions/github'
 
-const { test } = require('tap')
-const sinon = require('sinon')
-const github = require('@actions/github')
-
-const {
+import {
   buildFileMatchingPatternCommand,
   buildOccurrencesCommand,
   buildUrl
-} = require('../src/utils')
-const {
+} from '../src/utils.js'
+import {
   TEST_PATTERN,
   TEST_MATCHING_DIR,
   TEST_FILE,
   TEST_GITHUB_FAKE_VALUES,
   TEST_GITHUB_CONTEXT
-} = require('./constants')
+} from './constants.js'
 
 test('buildFileMatchingPatternCommand', t => {
   t.plan(1)

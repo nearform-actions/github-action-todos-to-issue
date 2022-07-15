@@ -1,13 +1,11 @@
-'use strict'
+import { execSync } from 'child_process'
 
-const { execSync } = require('child_process')
-
-const { logError } = require('./log')
-const {
+import { logError } from './log.js'
+import {
   buildFileMatchingPatternCommand,
   buildOccurrencesCommand,
   buildUrl
-} = require('./utils')
+} from './utils.js'
 
 /**
  * It returns the list of files matching the specified pattern in the specified directory
@@ -15,7 +13,7 @@ const {
  * @param {string} scanDir the directory to scan
  * @returns the list of files matching the specified pattern
  */
-function getFilesMatchingPattern(pattern, scanDir) {
+export function getFilesMatchingPattern(pattern, scanDir) {
   const bashCommand = buildFileMatchingPatternCommand(pattern, scanDir)
   const filesMatchingPattern = execSync(bashCommand, {
     encoding: 'utf8'
@@ -32,7 +30,7 @@ function getFilesMatchingPattern(pattern, scanDir) {
  * @param {string} pattern comma separated pattern
  * @returns the occurrences for the specified pattern in the file
  */
-function findOccurrences(file, pattern) {
+export function findOccurrences(file, pattern) {
   try {
     const occurrencesCommand = buildOccurrencesCommand(pattern, file)
     const occurrences = execSync(occurrencesCommand, {
@@ -67,9 +65,4 @@ function buildOccurrence(occurrence, file) {
   }
 
   return parsedOccurrence
-}
-
-module.exports = {
-  getFilesMatchingPattern,
-  findOccurrences
 }

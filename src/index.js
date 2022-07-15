@@ -1,5 +1,5 @@
-const core = require('@actions/core')
+import * as core from '@actions/core'
 
-const { run } = require('./action')
+import { run } from './action.js'
 
 run().catch(error => core.setFailed(error))

@@ -1,18 +1,16 @@
-'use strict'
+import { test } from 'tap'
+import sinon from 'sinon'
+import * as github from '@actions/github'
 
-const { test } = require('tap')
-const sinon = require('sinon')
-const github = require('@actions/github')
-
-const { publishIssue } = require('../src/issue')
-const {
+import { publishIssue } from '../src/issue.js'
+import {
   TEST_GITHUB_FAKE_VALUES,
   TEST_TOKEN,
   TEST_ISSUE_BODY,
   TEST_ISSUE_NUMBER,
   TEST_GITHUB_CONTEXT,
   TEST_GITHUB_GET_OCTOKIT
-} = require('./constants')
+} from './constants.js'
 
 test('publishIssue', t => {
   t.beforeEach(() => {

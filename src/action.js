@@ -1,15 +1,14 @@
-'use strict'
-const core = require('@actions/core')
+import * as core from '@actions/core'
 
-const { logInfo } = require('./log')
-const { getFilesMatchingPattern, findOccurrences } = require('./scan')
-const { publishIssue, renderIssueBody } = require('./issue')
+import { logInfo } from './log.js'
+import { getFilesMatchingPattern, findOccurrences } from './scan.js'
+import { publishIssue, renderIssueBody } from './issue.js'
 
 /**
  * Starting point for the action
  * @returns Promise<void>
  */
-async function run() {
+export async function run() {
   // Initialise the GitHub action inputs
   const token = core.getInput('github-token', { required: true })
   const pattern = core.getInput('pattern', { required: false })
@@ -33,8 +32,4 @@ async function run() {
   // Publish the issue
   const issue = await publishIssue(token, issueBody)
   logInfo(`Issue published successfully: #${issue.number}`)
-}
-
-module.exports = {
-  run
 }

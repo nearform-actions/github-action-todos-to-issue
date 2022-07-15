@@ -1,13 +1,13 @@
-'use strict'
-const github = require('@actions/github')
-const path = require('path')
-const fs = require('fs')
-const { promisify } = require('util')
-const readFile = promisify(fs.readFile)
-const handlebars = require('handlebars')
+import * as github from '@actions/github'
+import path from 'path'
+import fs from 'fs'
+import { promisify } from 'util'
+import handlebars from 'handlebars'
 
-const { ISSUE_TITLE, ISSUE_LABEL, STATE_OPEN } = require('./constants')
-const { logInfo } = require('./log')
+import { ISSUE_TITLE, ISSUE_LABEL, ISSUE_STATE_OPEN } from './constants.js'
+import { logInfo } from './log.js'
+
+const readFile = promisify(fs.readFile)
 
 async function getLastOpenIssue(token) {
   const octokit = github.getOctokit(token)
@@ -17,7 +17,7 @@ async function getLastOpenIssue(token) {
     owner,
     repo,
     creator: 'app/github-actions',
-    state: STATE_OPEN,
+    state: ISSUE_STATE_OPEN,
     sort: 'created',
     direction: 'desc',
     labels: ISSUE_LABEL
@@ -57,7 +57,7 @@ async function create(token, body) {
  * @param {*} data the filesOccurrences object
  * @returns the compiled handlebars template as a string
  */
-async function renderIssueBody(data) {
+export async function renderIssueBody(data) {
   const templateFilePath = path.resolve(__dirname, 'issue.template.hbs')
   const templateStringBuffer = await readFile(templateFilePath)
   const template = handlebars.compile(templateStringBuffer.toString())
@@ -70,7 +70,7 @@ async function renderIssueBody(data) {
  * @param {*} body
  * @returns the created or updated issue
  */
-async function publishIssue(token, body) {
+export async function publishIssue(token, body) {
   let issue = await getLastOpenIssue(token)
   if (issue) {
     issue = await update(token, body, issue.number)
@@ -81,9 +81,4 @@ async function publishIssue(token, body) {
   }
 
   return issue
-}
-
-module.exports = {
-  renderIssueBody,
-  publishIssue
 }

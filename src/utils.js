@@ -1,5 +1,4 @@
-'use strict'
-const github = require('@actions/github')
+import * as github from '@actions/github'
 
 /**
  * It builds the file matching pattern command combining the `find` and `grep` commands
@@ -7,7 +6,7 @@ const github = require('@actions/github')
  * @param {string} scanDir scan directory
  * @returns the file matching pattern command
  */
-function buildFileMatchingPatternCommand(pattern, scanDir) {
+export function buildFileMatchingPatternCommand(pattern, scanDir) {
   const patternCmd = buildPatternCommand(pattern)
 
   return `find ${scanDir} -type f -exec grep -rl ${patternCmd} {} \\;`
@@ -19,7 +18,7 @@ function buildFileMatchingPatternCommand(pattern, scanDir) {
  * @param {string} file location
  * @returns the find occurrences command
  */
-function buildOccurrencesCommand(pattern, file) {
+export function buildOccurrencesCommand(pattern, file) {
   const patternCmd = buildPatternCommand(pattern)
 
   return `grep -n ${patternCmd} ${file}`
@@ -31,7 +30,7 @@ function buildOccurrencesCommand(pattern, file) {
  * @param {number} line number
  * @returns the url for navigating to the line number
  */
-function buildUrl(file, line) {
+export function buildUrl(file, line) {
   const { owner, repo } = github.context.repo
   const branch = getBranch(github.context.ref)
   const uri = `https://github.com/${owner}/${repo}/blob/${branch}/${file}?plain=1#L${line}`
@@ -49,10 +48,4 @@ function buildPatternCommand(pattern) {
 
 function getBranch(ref) {
   return ref.replace('refs/heads/', '')
-}
-
-module.exports = {
-  buildFileMatchingPatternCommand,
-  buildOccurrencesCommand,
-  buildUrl
 }

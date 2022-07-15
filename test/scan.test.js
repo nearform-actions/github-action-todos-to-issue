@@ -1,16 +1,16 @@
-const { test } = require('tap')
-const sinon = require('sinon')
-const github = require('@actions/github')
+import { test } from 'tap'
+import sinon from 'sinon'
+import * as github from '@actions/github'
 
-const { getFilesMatchingPattern, findOccurrences } = require('../src/scan')
-const {
+import { getFilesMatchingPattern, findOccurrences } from '../src/scan.js'
+import {
   TEST_GITHUB_FAKE_VALUES,
   TEST_PATTERN,
   TEST_MATCHING_DIR,
   TEST_NOT_MATCHING_DIR,
   TEST_FILE,
   TEST_GITHUB_CONTEXT
-} = require('./constants')
+} from './constants.js'
 
 test('getFilesMatchingPattern', t => {
   t.plan(2)
