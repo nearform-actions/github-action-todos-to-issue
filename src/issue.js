@@ -28,17 +28,13 @@ async function getLastOpenIssue(token) {
 
 async function update(token, body, issueNumber) {
   const octokit = github.getOctokit(token)
-  const { owner, repo } = github.context.repo
 
-  const response = await octokit.request(
-    `PATCH /repos/{owner}/{repo}/issues/${issueNumber}`,
-    {
-      owner,
-      repo,
-      title: ISSUE_TITLE,
-      body: body
-    }
-  )
+  const response = await octokit.rest.issues.update({
+    ...github.context.repo,
+    issue_number: issueNumber,
+    title: ISSUE_TITLE,
+    body: body
+  })
 
   return response.data ? response.data : null
 }

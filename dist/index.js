@@ -17396,27 +17396,11 @@ const ISSUE_TITLE = 'Source code TODOs list'
 const ISSUE_STATE_OPEN = 'open'
 const ISSUE_STATE_CLOSED = 'closed'
 
-/**
- * Tests
- */
-const TEST_PATTERN = 'TODO:,// TODO'
-const TEST_DEFAULT_SCAN_DIR = '.'
-const TEST_EXCLUDE_DIRS = 'node_modules,.github'
-const TEST_SCAN_EXTENSIONS = '.js,.ts,.cjs,.mjs'
-const TEST_MATCHING_DIR = 'test/resources/matchingDir'
-const TEST_NOT_MATCHING_DIR = 'test/resources/notMatchingDir'
-
 module.exports = {
   ISSUE_LABEL,
   ISSUE_TITLE,
   ISSUE_STATE_OPEN,
-  ISSUE_STATE_CLOSED,
-  TEST_PATTERN,
-  TEST_DEFAULT_SCAN_DIR,
-  TEST_EXCLUDE_DIRS,
-  TEST_SCAN_EXTENSIONS,
-  TEST_MATCHING_DIR,
-  TEST_NOT_MATCHING_DIR
+  ISSUE_STATE_CLOSED
 }
 
 
@@ -17494,17 +17478,13 @@ async function getLastOpenIssue(token) {
 
 async function update(token, body, issueNumber) {
   const octokit = github.getOctokit(token)
-  const { owner, repo } = github.context.repo
 
-  const response = await octokit.request(
-    `PATCH /repos/{owner}/{repo}/issues/${issueNumber}`,
-    {
-      owner,
-      repo,
-      title: ISSUE_TITLE,
-      body: body
-    }
-  )
+  const response = await octokit.rest.issues.update({
+    ...github.context.repo,
+    issue_number: issueNumber,
+    title: ISSUE_TITLE,
+    body: body
+  })
 
   return response.data ? response.data : null
 }
