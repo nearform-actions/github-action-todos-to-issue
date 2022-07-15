@@ -4,7 +4,7 @@
 
 const { logInfo } = require('./log')
 const { getFilesMatchingPattern, findOccurrencies } = require('./scan')
-const { publishIssue, buildIssueBody } = require('./issue')
+const { publishIssue, renderIssueBody } = require('./issue')
 const { initInputs } = require('./inputs')
 
 async function run() {
@@ -26,10 +26,12 @@ async function run() {
   }
 
   // Loop each file and find the pattern occurrencies
-  const occurrencies = filesList.map(file => findOccurrencies(file, pattern))
+  const filesOccurrencies = filesList.map(file =>
+    findOccurrencies(file, pattern)
+  )
 
-  // Build the issue body
-  const issueBody = buildIssueBody(occurrencies)
+  // Render the issue body
+  const issueBody = await renderIssueBody({ filesOccurrencies })
 
   // Publish the issue
   const issue = await publishIssue(token, issueBody)
