@@ -17148,6 +17148,14 @@ module.exports = eval("require")("encoding");
 
 /***/ }),
 
+/***/ 770:
+/***/ ((module) => {
+
+module.exports = eval("require")("handlebars/runtime");
+
+
+/***/ }),
+
 /***/ 9491:
 /***/ ((module) => {
 
@@ -17286,6 +17294,64 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ }
 /******/ 
 /************************************************************************/
+/******/ /* webpack/runtime/create fake namespace object */
+/******/ (() => {
+/******/ 	var getProto = Object.getPrototypeOf ? (obj) => (Object.getPrototypeOf(obj)) : (obj) => (obj.__proto__);
+/******/ 	var leafPrototypes;
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 16: return value when it's Promise-like
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__nccwpck_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = this(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if(typeof value === 'object' && value) {
+/******/ 			if((mode & 4) && value.__esModule) return value;
+/******/ 			if((mode & 16) && typeof value.then === 'function') return value;
+/******/ 		}
+/******/ 		var ns = Object.create(null);
+/******/ 		__nccwpck_require__.r(ns);
+/******/ 		var def = {};
+/******/ 		leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
+/******/ 		for(var current = mode & 2 && value; typeof current == 'object' && !~leafPrototypes.indexOf(current); current = getProto(current)) {
+/******/ 			Object.getOwnPropertyNames(current).forEach((key) => (def[key] = () => (value[key])));
+/******/ 		}
+/******/ 		def['default'] = () => (value);
+/******/ 		__nccwpck_require__.d(ns, def);
+/******/ 		return ns;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/define property getters */
+/******/ (() => {
+/******/ 	// define getter functions for harmony exports
+/******/ 	__nccwpck_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			}
+/******/ 		}
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/hasOwnProperty shorthand */
+/******/ (() => {
+/******/ 	__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/make namespace object */
+/******/ (() => {
+/******/ 	// define __esModule on exports
+/******/ 	__nccwpck_require__.r = (exports) => {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/ })();
+/******/ 
 /******/ /* webpack/runtime/compat */
 /******/ 
 /******/ if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = new URL('.', import.meta.url).pathname.slice(import.meta.url.match(/^file:\/\/\/\w:/) ? 1 : 0, -1) + "/";
@@ -17438,6 +17504,9 @@ var external_fs_ = __nccwpck_require__(7147);
 var external_util_ = __nccwpck_require__(3837);
 // EXTERNAL MODULE: ./node_modules/handlebars/lib/index.js
 var lib = __nccwpck_require__(7492);
+// EXTERNAL MODULE: ./node_modules/@vercel/ncc/dist/ncc/@@notfound.js?handlebars/runtime
+var runtime = __nccwpck_require__(770);
+var runtime_namespaceObject = /*#__PURE__*/__nccwpck_require__.t(runtime, 2);
 ;// CONCATENATED MODULE: ./src/constants.js
 /**
  * Issue
@@ -17453,7 +17522,9 @@ const ISSUE_STATE_OPEN = 'open'
 
 
 
+const Handlebars = Object.assign(lib, runtime_namespaceObject)
 
+;
 
 
 const readFile = (0,external_util_.promisify)(external_fs_.readFile)
@@ -17509,7 +17580,7 @@ async function create(token, body) {
 async function renderIssueBody(data) {
   const templateFilePath = __nccwpck_require__.ab + "issue.template.hbs"
   const templateStringBuffer = await readFile(__nccwpck_require__.ab + "issue.template.hbs")
-  const template = lib.compile(templateStringBuffer.toString())
+  const template = Handlebars.compile(templateStringBuffer.toString())
   return template(data)
 }
 

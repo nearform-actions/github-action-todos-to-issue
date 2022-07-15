@@ -2,7 +2,9 @@ import * as github from '@actions/github'
 import path from 'path'
 import fs from 'fs'
 import { promisify } from 'util'
-import handlebars from 'handlebars'
+import MainHandlebars from 'handlebars'
+import * as RuntimeHandlebars from 'handlebars/runtime'
+const Handlebars = Object.assign(MainHandlebars, RuntimeHandlebars)
 
 import { ISSUE_TITLE, ISSUE_LABEL, ISSUE_STATE_OPEN } from './constants.js'
 import { logInfo } from './log.js'
@@ -60,7 +62,7 @@ async function create(token, body) {
 export async function renderIssueBody(data) {
   const templateFilePath = path.resolve(__dirname, 'issue.template.hbs')
   const templateStringBuffer = await readFile(templateFilePath)
-  const template = handlebars.compile(templateStringBuffer.toString())
+  const template = Handlebars.compile(templateStringBuffer.toString())
   return template(data)
 }
 
