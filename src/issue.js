@@ -2,9 +2,7 @@ import * as github from '@actions/github'
 import path from 'path'
 import fs from 'fs'
 import { promisify } from 'util'
-import MainHandlebars from 'handlebars'
-import * as RuntimeHandlebars from 'handlebars/runtime'
-const Handlebars = Object.assign(MainHandlebars, RuntimeHandlebars)
+import Handlebars from 'handlebars/dist/handlebars.js'
 
 import { ISSUE_TITLE, ISSUE_LABEL, ISSUE_STATE_OPEN } from './constants.js'
 import { logInfo } from './log.js'
