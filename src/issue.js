@@ -54,7 +54,7 @@ async function create(token, body) {
 
 /**
  * Renders the body using the Handlebars provided template
- * @param {*} data the filesOccurrencies object
+ * @param {*} data the filesOccurrences object
  * @returns the compiled handlebars template as a string
  */
 async function renderIssueBody(data) {

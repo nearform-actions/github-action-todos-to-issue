@@ -5,7 +5,7 @@ const {
   TEST_EXCLUDE_DIRS,
   TEST_SCAN_EXTENSIONS
 } = require('../test/constants')
-const { getFilesMatchingPattern, findOccurrencies } = require('../src/scan')
+const { getFilesMatchingPattern, findOccurrences } = require('../src/scan')
 
 jest.mock('@actions/github', () => ({
   context: {
@@ -48,18 +48,18 @@ describe('getFilesMatchingPattern', () => {
   })
 })
 
-describe('findOccurrencies', () => {
-  it('should return the list of occurrencies with the line number and the comment', () => {
-    const result = findOccurrencies(
+describe('findOccurrences', () => {
+  it('should return the list of occurrences with the line number and the comment', () => {
+    const result = findOccurrences(
       `${TEST_MATCHING_DIR}/sample1.js`,
       TEST_PATTERN
     )
 
     expect(result).toHaveProperty('file')
-    expect(result).toHaveProperty('occurrencies')
+    expect(result).toHaveProperty('occurrences')
     expect(result.file).toBe(`${TEST_MATCHING_DIR}/sample1.js`)
-    expect(result.occurrencies).toHaveLength(2)
-    result.occurrencies.forEach(occurrence => {
+    expect(result.occurrences).toHaveLength(2)
+    result.occurrences.forEach(occurrence => {
       expect(occurrence).toHaveProperty('line')
       expect(occurrence).toHaveProperty('comment')
     })

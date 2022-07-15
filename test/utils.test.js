@@ -9,7 +9,7 @@ const {
 const {
   buildFileMatchingPatternCommand,
   buildUrl,
-  buildOccurrenciesCommand
+  buildOccurrencesCommand
 } = require('../src/utils')
 
 jest.mock('@actions/github', () => ({
@@ -85,16 +85,16 @@ describe('buildFileMatchingPatternCommand', () => {
   })
 })
 
-describe('buildOccurrenciesCommand', () => {
+describe('buildOccurrencesCommand', () => {
   it('should return the proper grep command with one pattern', () => {
-    const cmd = buildOccurrenciesCommand('TODO', TEST_FILE)
+    const cmd = buildOccurrencesCommand('TODO', TEST_FILE)
     const expected = 'grep -n -e "TODO" test/resources/matchingDir/sample1.js'
 
     expect(cmd).toStrictEqual(expected)
   })
 
   it('should return the proper grep command with two patterns', () => {
-    const cmd = buildOccurrenciesCommand(TEST_PATTERN, TEST_FILE)
+    const cmd = buildOccurrencesCommand(TEST_PATTERN, TEST_FILE)
     const expected =
       'grep -n -e "TODO:" -e "// TODO" test/resources/matchingDir/sample1.js'
 

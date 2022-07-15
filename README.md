@@ -21,15 +21,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Get branch name
-        id: get_branch
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
       - name: Run todos to issue action
-        uses: ./.github/actions/github-action-todos-to-issue
+        uses: nearform/github-action-todos-to-issue@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          github-branch: ${{ steps.get_branch.outputs.branch }}
 ```
 
 You can easily replace the branch on which the scan will be executed (default is _main_) or add multiple branches.
@@ -42,9 +37,6 @@ This action has different inputs, some of them required and others optional:
 * `github-token`:
   * **Description**: this value is automatically populated by GitHub
   * **Required**: yes
-* `github-branch`:
-  * **Description**: this value is automatically populated with the `get_branch` step in the `todos-to-issue.yml` file
-  * **Required**: yes
 * `pattern`:
   * **Description**: it specifies the pattern you want to match during the scan of the source code.
   * **Required**: no
@@ -53,42 +45,3 @@ This action has different inputs, some of them required and others optional:
   * **Description**: it specifies the directory you want to scan.
   * **Required**: no
   * **Default**: `'.'`
-* `exclude-dirs`:
-  * **Description**: it specifies the excluded directories from the scan.
-  * **Required**: no
-  * **Default**: `'node_modules,.github'`
-* `scan-extensions`:
-  * **Description**: it specifies the files extensions you want to scan.
-  * **Required**: no
-  * **Default**: `'.js,.ts,.cjs,.mjs'`
-
-## Example with all the inputs
-```yaml
-name: Todos to issue
-
-on:
-  push:
-    branches:    
-      - 'main'
-
-jobs:
-  todos-to-issue:
-    runs-on: ubuntu-latest
-    name: Looks for TODO comments in the source code and creates an issue with the found TODOs
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Get branch name
-        id: get_branch
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-      - name: Run todos to issue action
-        uses: ./.github/actions/github-action-todos-to-issue
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          github-branch: ${{ steps.get_branch.outputs.branch }}
-          pattern: 'TODO:,// TODO'
-          scan-dir: '.'
-          exclude-dirs: 'node_modules,.github'
-          scan-extensions: '.js,.ts,.cjs,.mjs'
-```

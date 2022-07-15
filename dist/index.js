@@ -17339,25 +17339,20 @@ module.exports = require("zlib");
 
 "use strict";
 
-
-// import * as github from '@actions/github'
+const core = __nccwpck_require__(2186)
 
 const { logInfo } = __nccwpck_require__(7739)
-const { getFilesMatchingPattern, findOccurrencies } = __nccwpck_require__(3908)
+const { getFilesMatchingPattern, findOccurrences } = __nccwpck_require__(3908)
 const { publishIssue, renderIssueBody } = __nccwpck_require__(6644)
-const { initInputs } = __nccwpck_require__(9962)
 
 async function run() {
   // Initialise the GitHub action inputs
-  const { token, pattern, scanDir, excludeDirs, scanExtensions } = initInputs()
+  const token = core.getInput('github-token', { required: true })
+  const pattern = core.getInput('pattern', { required: false })
+  const scanDir = core.getInput('scan-dir', { required: false })
 
   // Scan the repository
-  const filesList = getFilesMatchingPattern(
-    pattern,
-    scanDir,
-    excludeDirs,
-    scanExtensions
-  )
+  const filesList = getFilesMatchingPattern(pattern, scanDir)
   if (filesList.length === 0) {
     logInfo(
       `Pattern "${pattern}" not found in the source code. Nothing else to do.`
@@ -17365,13 +17360,11 @@ async function run() {
     return
   }
 
-  // Loop each file and find the pattern occurrencies
-  const filesOccurrencies = filesList.map(file =>
-    findOccurrencies(file, pattern)
-  )
+  // Loop each file and find the pattern occurrences
+  const filesOccurrences = filesList.map(file => findOccurrences(file, pattern))
 
   // Render the issue body
-  const issueBody = await renderIssueBody({ filesOccurrencies })
+  const issueBody = await renderIssueBody({ filesOccurrences })
 
   // Publish the issue
   const issue = await publishIssue(token, issueBody)
@@ -17401,44 +17394,6 @@ module.exports = {
   ISSUE_TITLE,
   ISSUE_STATE_OPEN,
   ISSUE_STATE_CLOSED
-}
-
-
-/***/ }),
-
-/***/ 9962:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-"use strict";
-
-const core = __nccwpck_require__(2186)
-
-const inputs = {
-  token: null,
-  branch: null,
-  pattern: null,
-  scanDir: null,
-  excludeDirs: null,
-  scanExtensions: null
-}
-
-function initInputs() {
-  inputs.token = core.getInput('github-token', { required: true })
-  inputs.branch = core.getInput('github-branch', { required: true })
-  inputs.pattern = core.getInput('pattern', { required: false })
-  inputs.scanDir = core.getInput('scan-dir', { required: false })
-  inputs.excludeDirs = core.getInput('exclude-dirs', { required: false })
-  inputs.scanExtensions = core.getInput('scan-extensions', { required: false })
-  return inputs
-}
-
-function getInputs() {
-  return inputs
-}
-
-module.exports = {
-  initInputs,
-  getInputs
 }
 
 
@@ -17504,7 +17459,7 @@ async function create(token, body) {
 
 /**
  * Renders the body using the Handlebars provided template
- * @param {*} data the filesOccurrencies object
+ * @param {*} data the filesOccurrences object
  * @returns the compiled handlebars template as a string
  */
 async function renderIssueBody(data) {
@@ -17569,22 +17524,12 @@ const { execSync } = __nccwpck_require__(2081)
 const { logError } = __nccwpck_require__(7739)
 const {
   buildFileMatchingPatternCommand,
-  buildOccurrenciesCommand,
+  buildOccurrencesCommand,
   buildUrl
 } = __nccwpck_require__(7880)
 
-function getFilesMatchingPattern(
-  pattern,
-  scanDir,
-  excludeDirs,
-  scanExtensions
-) {
-  const bashCommand = buildFileMatchingPatternCommand(
-    pattern,
-    scanDir,
-    excludeDirs,
-    scanExtensions
-  )
+function getFilesMatchingPattern(pattern, scanDir) {
+  const bashCommand = buildFileMatchingPatternCommand(pattern, scanDir)
   const filesMatchingPattern = execSync(bashCommand, {
     encoding: 'utf8'
   })
@@ -17594,17 +17539,17 @@ function getFilesMatchingPattern(
   return filesMatchingPattern
 }
 
-function findOccurrencies(file, pattern) {
+function findOccurrences(file, pattern) {
   try {
-    const occurrenciesCommand = buildOccurrenciesCommand(pattern, file)
-    const occurrencies = execSync(occurrenciesCommand, {
+    const occurrencesCommand = buildOccurrencesCommand(pattern, file)
+    const occurrences = execSync(occurrencesCommand, {
       encoding: 'utf8'
     })
       .split('\n')
       .filter(line => line)
       .map(occurrence => buildOccurrence(occurrence, file))
 
-    return { file, occurrencies }
+    return { file, occurrences }
   } catch (err) {
     logError(err)
     throw new Error(err.message)
@@ -17633,7 +17578,7 @@ function buildOccurrence(occurrence, file) {
 
 module.exports = {
   getFilesMatchingPattern,
-  findOccurrencies
+  findOccurrences
 }
 
 
@@ -17645,57 +17590,56 @@ module.exports = {
 "use strict";
 
 const github = __nccwpck_require__(5438)
-const { getInputs } = __nccwpck_require__(9962)
 
-function buildFileMatchingPatternCommand(
-  pattern,
-  scanDir,
-  excludeDirs,
-  scanExtensions
-) {
-  const patternCmd = pattern
-    .split(',')
-    .filter(ptrn => ptrn)
-    .map(ptrn => `-e "${ptrn}"`)
-    .join(' ')
+/**
+ * It builds the file matching pattern command combining the `find` and `grep` commands
+ * @param {string} pattern comma separated pattern
+ * @param {string} scanDir scan directory
+ * @returns the file matching pattern command
+ */
+function buildFileMatchingPatternCommand(pattern, scanDir) {
+  const patternCmd = buildPatternCommand(pattern)
 
-  const scanExtensionsCmd = scanExtensions
-    .split(',')
-    .filter(ext => ext)
-    .map(ext => `-name "*${ext}"`)
-    .join(' -o ')
-
-  const excludeDirsCmd = excludeDirs
-    .split(',')
-    .filter(dir => dir)
-    .map(dir => `! -path "./${dir}/*"`)
-    .join(' ')
-
-  return `find ${scanDir} -type f \\( ${scanExtensionsCmd} \\) ${excludeDirsCmd} -exec grep -rl ${patternCmd} {} \\;`
+  return `find ${scanDir} -type f -exec grep -rl ${patternCmd} {} \\;`
 }
 
-function buildOccurrenciesCommand(pattern, file) {
-  const patternCmd = pattern
-    .split(',')
-    .filter(ptrn => ptrn)
-    .map(ptrn => `-e "${ptrn}"`)
-    .join(' ')
+/**
+ * It builds the find occurrences command using the `grep` command
+ * @param {string} pattern comma separated pattern
+ * @param {string} file filename
+ * @returns the find occurrences command
+ */
+function buildOccurrencesCommand(pattern, file) {
+  const patternCmd = buildPatternCommand(pattern)
 
   return `grep -n ${patternCmd} ${file}`
 }
 
+/**
+ * It builds the url for navigating to the line number of a specific file in the repository
+ * @param {string} file filaname
+ * @param {number} line number
+ * @returns the url for navigating to the line number
+ */
 function buildUrl(file, line) {
-  const { branch } = getInputs()
   const { owner, repo } = github.context.repo
-
+  const branch = github.context.ref
   const uri = `https://github.com/${owner}/${repo}/blob/${branch}/${file}?plain=1#L${line}`
 
   return uri
 }
 
+function buildPatternCommand(pattern) {
+  return pattern
+    .split(',')
+    .filter(ptrn => ptrn)
+    .map(ptrn => `-e "${ptrn}"`)
+    .join(' ')
+}
+
 module.exports = {
   buildFileMatchingPatternCommand,
-  buildOccurrenciesCommand,
+  buildOccurrencesCommand,
   buildUrl
 }
 

@@ -5,22 +5,12 @@ const { execSync } = require('child_process')
 const { logError } = require('./log')
 const {
   buildFileMatchingPatternCommand,
-  buildOccurrenciesCommand,
+  buildOccurrencesCommand,
   buildUrl
 } = require('./utils')
 
-function getFilesMatchingPattern(
-  pattern,
-  scanDir,
-  excludeDirs,
-  scanExtensions
-) {
-  const bashCommand = buildFileMatchingPatternCommand(
-    pattern,
-    scanDir,
-    excludeDirs,
-    scanExtensions
-  )
+function getFilesMatchingPattern(pattern, scanDir) {
+  const bashCommand = buildFileMatchingPatternCommand(pattern, scanDir)
   const filesMatchingPattern = execSync(bashCommand, {
     encoding: 'utf8'
   })
@@ -30,17 +20,17 @@ function getFilesMatchingPattern(
   return filesMatchingPattern
 }
 
-function findOccurrencies(file, pattern) {
+function findOccurrences(file, pattern) {
   try {
-    const occurrenciesCommand = buildOccurrenciesCommand(pattern, file)
-    const occurrencies = execSync(occurrenciesCommand, {
+    const occurrencesCommand = buildOccurrencesCommand(pattern, file)
+    const occurrences = execSync(occurrencesCommand, {
       encoding: 'utf8'
     })
       .split('\n')
       .filter(line => line)
       .map(occurrence => buildOccurrence(occurrence, file))
 
-    return { file, occurrencies }
+    return { file, occurrences }
   } catch (err) {
     logError(err)
     throw new Error(err.message)
@@ -69,5 +59,5 @@ function buildOccurrence(occurrence, file) {
 
 module.exports = {
   getFilesMatchingPattern,
-  findOccurrencies
+  findOccurrences
 }

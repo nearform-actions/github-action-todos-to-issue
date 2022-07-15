@@ -1,55 +1,54 @@
 'use strict'
 const github = require('@actions/github')
-const { getInputs } = require('./inputs')
 
-function buildFileMatchingPatternCommand(
-  pattern,
-  scanDir,
-  excludeDirs,
-  scanExtensions
-) {
-  const patternCmd = pattern
-    .split(',')
-    .filter(ptrn => ptrn)
-    .map(ptrn => `-e "${ptrn}"`)
-    .join(' ')
+/**
+ * It builds the file matching pattern command combining the `find` and `grep` commands
+ * @param {string} pattern comma separated pattern
+ * @param {string} scanDir scan directory
+ * @returns the file matching pattern command
+ */
+function buildFileMatchingPatternCommand(pattern, scanDir) {
+  const patternCmd = buildPatternCommand(pattern)
 
-  const scanExtensionsCmd = scanExtensions
-    .split(',')
-    .filter(ext => ext)
-    .map(ext => `-name "*${ext}"`)
-    .join(' -o ')
-
-  const excludeDirsCmd = excludeDirs
-    .split(',')
-    .filter(dir => dir)
-    .map(dir => `! -path "./${dir}/*"`)
-    .join(' ')
-
-  return `find ${scanDir} -type f \\( ${scanExtensionsCmd} \\) ${excludeDirsCmd} -exec grep -rl ${patternCmd} {} \\;`
+  return `find ${scanDir} -type f -exec grep -rl ${patternCmd} {} \\;`
 }
 
-function buildOccurrenciesCommand(pattern, file) {
-  const patternCmd = pattern
-    .split(',')
-    .filter(ptrn => ptrn)
-    .map(ptrn => `-e "${ptrn}"`)
-    .join(' ')
+/**
+ * It builds the find occurrences command using the `grep` command
+ * @param {string} pattern comma separated pattern
+ * @param {string} file filename
+ * @returns the find occurrences command
+ */
+function buildOccurrencesCommand(pattern, file) {
+  const patternCmd = buildPatternCommand(pattern)
 
   return `grep -n ${patternCmd} ${file}`
 }
 
+/**
+ * It builds the url for navigating to the line number of a specific file in the repository
+ * @param {string} file filaname
+ * @param {number} line number
+ * @returns the url for navigating to the line number
+ */
 function buildUrl(file, line) {
-  const { branch } = getInputs()
   const { owner, repo } = github.context.repo
-
+  const branch = github.context.ref
   const uri = `https://github.com/${owner}/${repo}/blob/${branch}/${file}?plain=1#L${line}`
 
   return uri
 }
 
+function buildPatternCommand(pattern) {
+  return pattern
+    .split(',')
+    .filter(ptrn => ptrn)
+    .map(ptrn => `-e "${ptrn}"`)
+    .join(' ')
+}
+
 module.exports = {
   buildFileMatchingPatternCommand,
-  buildOccurrenciesCommand,
+  buildOccurrencesCommand,
   buildUrl
 }
