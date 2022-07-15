@@ -17375,7 +17375,7 @@ async function run() {
 
   // Publish the issue
   const issue = await publishIssue(token, issueBody)
-  logInfo(`Issue publish successfully: #${issue.number}`)
+  logInfo(`Issue published successfully: #${issue.number}`)
 }
 
 module.exports = {
