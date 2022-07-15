@@ -1,0 +1,17 @@
+name: notify-release
+on:
+  workflow_dispatch:
+    branches:
+      - main
+  schedule:
+    - cron: '30 8 * * *'
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if there's a release pending
+        id: notify
+        uses: nearform/github-action-notify-release@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-days: 0
