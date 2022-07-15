@@ -2,7 +2,7 @@ import * as github from '@actions/github'
 import path from 'path'
 import fs from 'fs'
 import { promisify } from 'util'
-import Handlebars from 'handlebars/dist/handlebars.js'
+import Handlebars from 'handlebars'
 
 import { ISSUE_TITLE, ISSUE_LABEL, ISSUE_STATE_OPEN } from './constants.js'
 import { logInfo } from './log.js'
