@@ -4,7 +4,7 @@ const {
   TEST_NOT_MATCHING_DIR,
   TEST_EXCLUDE_DIRS,
   TEST_SCAN_EXTENSIONS
-} = require('../src/constants')
+} = require('../test/constants')
 const { getFilesMatchingPattern, findOccurrencies } = require('../src/scan')
 
 jest.mock('@actions/github', () => ({

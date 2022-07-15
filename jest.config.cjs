@@ -8,7 +8,8 @@ module.exports = {
     '/__tests__/',
     'coverage',
     '/test/resources/',
-    '/dist/'
+    '/dist/',
+    '/test/constants.js'
   ],
   testEnvironment: 'node',
   moduleDirectories: ['node_modules', 'src'],
