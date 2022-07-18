@@ -1,8 +1,7 @@
 import * as github from '@actions/github'
-import path from 'path'
 import fs from 'fs'
 import { promisify } from 'util'
-import * as Handlebars from 'handlebars'
+import { Liquid } from 'liquidjs'
 
 import { ISSUE_TITLE, ISSUE_LABEL, ISSUE_STATE_OPEN } from './constants.js'
 import { logInfo } from './log.js'
@@ -53,15 +52,19 @@ async function create(token, body) {
 }
 
 /**
- * Renders the body using the Handlebars provided template
+ * Renders the body using the LiquidJS provided template
  * @param {*} data the filesOccurrences object
- * @returns the compiled handlebars template as a string
+ * @returns the compiled LiquidJS template as a string
  */
 export async function renderIssueBody(data) {
-  const templateFilePath = path.resolve(__dirname, 'issue.template.hbs')
-  const templateStringBuffer = await readFile(templateFilePath)
-  const template = Handlebars.compile(templateStringBuffer.toString())
-  return template(data)
+  const templateUrl = new URL('issue.template.liquid', import.meta.url)
+  const templateStringBuffer = await readFile(templateUrl)
+  const engine = new Liquid()
+  const template = await engine.parseAndRender(
+    templateStringBuffer.toString(),
+    data
+  )
+  return template
 }
 
 /**

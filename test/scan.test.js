@@ -1,15 +1,12 @@
 import { test } from 'tap'
-import sinon from 'sinon'
-import * as github from '@actions/github'
+import esmock from 'esmock'
 
-import { getFilesMatchingPattern, findOccurrences } from '../src/scan.js'
+import { getFilesMatchingPattern } from '../src/scan.js'
 import {
-  TEST_GITHUB_FAKE_VALUES,
   TEST_PATTERN,
   TEST_MATCHING_DIR,
   TEST_NOT_MATCHING_DIR,
-  TEST_FILE,
-  TEST_GITHUB_CONTEXT
+  TEST_FILE
 } from './constants.js'
 
 test('getFilesMatchingPattern', t => {
@@ -47,21 +44,20 @@ test('getFilesMatchingPattern', t => {
 })
 
 test('findOccurrences', t => {
-  t.beforeEach(() => {
-    sinon.stub(github, TEST_GITHUB_CONTEXT).value(TEST_GITHUB_FAKE_VALUES)
-  })
-  t.afterEach(() => {
-    sinon.restore()
-  })
-
   t.plan(1)
 
   t.test(
     'should return the list of occurrences with the line number and the comment',
-    t => {
+    async t => {
       t.plan(5)
 
-      const result = findOccurrences(TEST_FILE, TEST_PATTERN)
+      const scanModule = await esmock('../src/scan.js', {
+        '../src/utils.js': {
+          buildUrl: () => 'https://fake.url'
+        }
+      })
+
+      const result = scanModule.findOccurrences(TEST_FILE, TEST_PATTERN)
       t.hasProps(result, ['file', 'occurrences'])
       t.equal(result.file, TEST_FILE)
       t.equal(result.occurrences.length, 2)

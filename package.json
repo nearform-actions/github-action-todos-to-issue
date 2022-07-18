@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "lint": "eslint .",
-    "test": "tap",
+    "test": "tap --node-arg=\"--loader=esmock\"",
     "prepare": "husky install",
     "build": "ncc build src --license licenses.txt"
   },
@@ -29,10 +29,10 @@
     "eslint": "^8.19.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "esmock": "^1.7.8",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
-    "sinon": "^14.0.0",
     "tap": "^16.3.0"
   },
   "lint-staged": {
@@ -41,6 +41,6 @@
   "dependencies": {
     "@actions/core": "^1.9.0",
     "@actions/github": "^5.0.3",
-    "handlebars": "^4.7.7"
+    "liquidjs": "^9.39.1"
   }
 }

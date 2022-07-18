@@ -1,18 +1,15 @@
 import { test } from 'tap'
-import sinon from 'sinon'
-import * as github from '@actions/github'
+import esmock from 'esmock'
 
 import {
   buildFileMatchingPatternCommand,
-  buildOccurrencesCommand,
-  buildUrl
+  buildOccurrencesCommand
 } from '../src/utils.js'
 import {
   TEST_PATTERN,
   TEST_MATCHING_DIR,
   TEST_FILE,
-  TEST_GITHUB_FAKE_VALUES,
-  TEST_GITHUB_CONTEXT
+  TEST_GITHUB_FAKE_VALUES
 } from './constants.js'
 
 test('buildFileMatchingPatternCommand', t => {
@@ -43,18 +40,18 @@ test('buildOccurrencesCommand', t => {
 })
 
 test('buildUrl', t => {
-  t.afterEach(() => {
-    sinon.restore()
-  })
-
   t.plan(1)
 
-  t.test('should return the proper url', t => {
+  t.test('should return the proper url', async t => {
     t.plan(1)
 
-    sinon.stub(github, TEST_GITHUB_CONTEXT).value(TEST_GITHUB_FAKE_VALUES)
+    const utilsModule = await esmock('../src/utils.js', {
+      '@actions/github': {
+        context: TEST_GITHUB_FAKE_VALUES
+      }
+    })
 
-    const url = buildUrl(TEST_FILE, 5)
+    const url = utilsModule.buildUrl(TEST_FILE, 5)
     const expected =
       'https://github.com/owner/repository/blob/main/test/resources/matchingDir/sample1.js?plain=1#L5'
     t.equal(url, expected)
