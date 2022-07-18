@@ -10,7 +10,7 @@ import {
 } from './constants.js'
 import { renderIssueBody } from '../src/issue.js'
 
-test('publishIssue', t => {
+test('publishIssue', async t => {
   t.test('should create an issue if not already present', async t => {
     const issueModule = await esmock('../src/issue.js', {
       '@actions/github': {
@@ -31,8 +31,6 @@ test('publishIssue', t => {
     const issue = await issueModule.publishIssue(TEST_TOKEN, TEST_ISSUE_BODY)
     t.equal(issue.number, TEST_ISSUE_NUMBER)
     t.equal(issue.body, TEST_ISSUE_BODY)
-
-    t.end()
   })
 
   t.test('should update the issue if already present', async t => {
@@ -55,14 +53,10 @@ test('publishIssue', t => {
     const issue = await issueModule.publishIssue(TEST_TOKEN, TEST_ISSUE_BODY)
     t.equal(issue.number, TEST_ISSUE_NUMBER)
     t.equal(issue.body, TEST_ISSUE_BODY)
-
-    t.end()
   })
-
-  t.end()
 })
 
-test('renderIssueBody', t => {
+test('renderIssueBody', async t => {
   t.test(
     'should return the proper rendendered issue body with markdown format',
     async t => {
@@ -105,10 +99,6 @@ test('renderIssueBody', t => {
       const snapshotStringBuffer = await readFile(snapshotUrl)
 
       t.equal(body, snapshotStringBuffer.toString())
-
-      t.end()
     }
   )
-
-  t.end()
 })

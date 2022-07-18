@@ -9,10 +9,10 @@ import {
   TEST_FILE
 } from './constants.js'
 
-test('getFilesMatchingPattern', t => {
+test('getFilesMatchingPattern', async t => {
   t.test(
     'should return the list of files matching with the specified pattern',
-    t => {
+    async t => {
       const filesList = getFilesMatchingPattern(TEST_PATTERN, TEST_MATCHING_DIR)
       const expectedFilesList = [
         `${TEST_MATCHING_DIR}/sample1.js`,
@@ -21,29 +21,23 @@ test('getFilesMatchingPattern', t => {
       ]
 
       t.same(filesList.sort(), expectedFilesList.sort())
-
-      t.end()
     }
   )
 
   t.test(
     'should return an empty array if no files are found with the specified pattern',
-    t => {
+    async t => {
       const filesList = getFilesMatchingPattern(
         TEST_PATTERN,
         TEST_NOT_MATCHING_DIR
       )
 
       t.same(filesList, [])
-
-      t.end()
     }
   )
-
-  t.end()
 })
 
-test('findOccurrences', t => {
+test('findOccurrences', async t => {
   t.test(
     'should return the list of occurrences with the line number and the comment',
     async t => {
@@ -60,10 +54,6 @@ test('findOccurrences', t => {
       result.occurrences.forEach(occurrence => {
         t.hasProps(occurrence, ['line', 'comment', 'url'])
       })
-
-      t.end()
     }
   )
-
-  t.end()
 })
