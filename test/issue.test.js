@@ -11,11 +11,7 @@ import {
 import { renderIssueBody } from '../src/issue.js'
 
 test('publishIssue', t => {
-  t.plan(2)
-
   t.test('should create an issue if not already present', async t => {
-    t.plan(2)
-
     const issueModule = await esmock('../src/issue.js', {
       '@actions/github': {
         context: TEST_GITHUB_FAKE_VALUES,
@@ -35,11 +31,11 @@ test('publishIssue', t => {
     const issue = await issueModule.publishIssue(TEST_TOKEN, TEST_ISSUE_BODY)
     t.equal(issue.number, TEST_ISSUE_NUMBER)
     t.equal(issue.body, TEST_ISSUE_BODY)
+
+    t.end()
   })
 
   t.test('should update the issue if already present', async t => {
-    t.plan(2)
-
     const issueModule = await esmock('../src/issue.js', {
       '@actions/github': {
         context: TEST_GITHUB_FAKE_VALUES,
@@ -59,12 +55,14 @@ test('publishIssue', t => {
     const issue = await issueModule.publishIssue(TEST_TOKEN, TEST_ISSUE_BODY)
     t.equal(issue.number, TEST_ISSUE_NUMBER)
     t.equal(issue.body, TEST_ISSUE_BODY)
+
+    t.end()
   })
+
+  t.end()
 })
 
 test('renderIssueBody', t => {
-  t.plan(1)
-
   t.test(
     'should return the proper rendendered issue body with markdown format',
     async t => {
@@ -107,6 +105,10 @@ test('renderIssueBody', t => {
       const snapshotStringBuffer = await readFile(snapshotUrl)
 
       t.equal(body, snapshotStringBuffer.toString())
+
+      t.end()
     }
   )
+
+  t.end()
 })

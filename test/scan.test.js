@@ -10,13 +10,9 @@ import {
 } from './constants.js'
 
 test('getFilesMatchingPattern', t => {
-  t.plan(2)
-
   t.test(
     'should return the list of files matching with the specified pattern',
     t => {
-      t.plan(1)
-
       const filesList = getFilesMatchingPattern(TEST_PATTERN, TEST_MATCHING_DIR)
       const expectedFilesList = [
         `${TEST_MATCHING_DIR}/sample1.js`,
@@ -25,32 +21,32 @@ test('getFilesMatchingPattern', t => {
       ]
 
       t.same(filesList.sort(), expectedFilesList.sort())
+
+      t.end()
     }
   )
 
   t.test(
     'should return an empty array if no files are found with the specified pattern',
     t => {
-      t.plan(1)
-
       const filesList = getFilesMatchingPattern(
         TEST_PATTERN,
         TEST_NOT_MATCHING_DIR
       )
 
       t.same(filesList, [])
+
+      t.end()
     }
   )
+
+  t.end()
 })
 
 test('findOccurrences', t => {
-  t.plan(1)
-
   t.test(
     'should return the list of occurrences with the line number and the comment',
     async t => {
-      t.plan(5)
-
       const scanModule = await esmock('../src/scan.js', {
         '../src/utils.js': {
           buildUrl: () => 'https://fake.url'
@@ -64,6 +60,10 @@ test('findOccurrences', t => {
       result.occurrences.forEach(occurrence => {
         t.hasProps(occurrence, ['line', 'comment', 'url'])
       })
+
+      t.end()
     }
   )
+
+  t.end()
 })

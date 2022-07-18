@@ -8,9 +8,6 @@ inputs:
   github-token:
     description: 'GitHub token'
     required: true
-  github-branch:
-    description: 'Current repository branch'
-    require: true
   pattern:
     description: 'Pattern to match comma separated'
     required: false
