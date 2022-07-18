@@ -1,12 +1,9 @@
 import * as github from '@actions/github'
-import fs from 'fs'
-import { promisify } from 'util'
-import { Liquid } from 'liquidjs'
+import { readFile } from 'node:fs/promises'
+import ejs from 'ejs'
 
 import { ISSUE_TITLE, ISSUE_LABEL, ISSUE_STATE_OPEN } from './constants.js'
 import { logInfo } from './log.js'
-
-const readFile = promisify(fs.readFile)
 
 async function getLastOpenIssue(token) {
   const octokit = github.getOctokit(token)
@@ -57,14 +54,10 @@ async function create(token, body) {
  * @returns the compiled LiquidJS template as a string
  */
 export async function renderIssueBody(data) {
-  const templateUrl = new URL('issue.template.liquid', import.meta.url)
+  const templateUrl = new URL('issue.template.ejs', import.meta.url)
   const templateStringBuffer = await readFile(templateUrl)
-  const engine = new Liquid()
-  const template = await engine.parseAndRender(
-    templateStringBuffer.toString(),
-    data
-  )
-  return template
+  const template = ejs.compile(templateStringBuffer.toString())
+  return template(data)
 }
 
 /**

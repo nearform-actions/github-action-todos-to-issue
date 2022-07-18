@@ -1,7 +1,6 @@
 import { test } from 'tap'
 import esmock from 'esmock'
-import fs from 'fs'
-import { promisify } from 'util'
+import { readFile } from 'node:fs/promises'
 
 import {
   TEST_GITHUB_FAKE_VALUES,
@@ -10,8 +9,6 @@ import {
   TEST_ISSUE_NUMBER
 } from './constants.js'
 import { renderIssueBody } from '../src/issue.js'
-
-const readFile = promisify(fs.readFile)
 
 test('publishIssue', t => {
   t.plan(2)
