@@ -1,36 +1,46 @@
 {
-  "name": "bench-template",
+  "name": "github-action-todos-to-issue",
   "version": "1.0.0",
-  "description": "Template to start a new repository on the bench",
-  "main": "index.js",
+  "description": "It scans your source code looking for TODO comments and creates an issue with them",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "lint": "eslint .",
-    "test": "echo \"Error: no test specified\" && exit 0",
-    "prepare": "husky install"
+    "test": "tap --node-arg=\"--loader=esmock\"",
+    "prepare": "husky install",
+    "build": "ncc build src --license licenses.txt"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nearform/bench-template.git"
+    "url": "git+https://github.com/nearform/github-action-todos-to-issue.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nearform/bench-template/issues"
+    "url": "https://github.com/nearform/github-action-todos-to-issue/issues"
   },
-  "homepage": "https://github.com/nearform/bench-template#readme",
+  "homepage": "https://github.com/nearform/github-action-todos-to-issue#readme",
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
+    "@vercel/ncc": "^0.34.0",
     "eslint": "^8.20.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "esmock": "^1.7.8",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
-    "prettier": "^2.7.1"
+    "prettier": "^2.7.1",
+    "tap": "^16.3.0"
   },
   "lint-staged": {
     "*.{js,jsx}": "eslint --cache --fix"
+  },
+  "dependencies": {
+    "@actions/core": "^1.9.0",
+    "@actions/github": "^5.0.3",
+    "ejs": "^3.1.8",
+    "encoding": "^0.1.13"
   }
 }

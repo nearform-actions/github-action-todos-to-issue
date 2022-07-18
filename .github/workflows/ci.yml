@@ -19,6 +19,18 @@ jobs:
           npm ci
           npm run lint
           npm test
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: "Check dist/index.js does not contain eval('require'), eval(\"require\") or require.resolve"
+        run: ./check-require.sh
 
   automerge:
     name: Merge dependabot's PRs

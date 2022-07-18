@@ -1,0 +1,26 @@
+# See the syntax docs at
+# https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions
+
+name: Todos To Issue GitHub Action
+description: It scans your source code looking for TODO comments and creates an issue with them
+
+inputs:
+  github-token:
+    description: 'GitHub token'
+    required: true
+  pattern:
+    description: 'Pattern to match comma separated'
+    required: false
+    default: 'TODO:,// TODO'
+  scan-dir:
+    description: 'Scan directory'
+    required: false
+    default: '.'
+
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
+
+branding:
+  icon: 'x'
+  color: 'gray-dark'

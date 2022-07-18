@@ -1,15 +1,47 @@
-![CI](https://github.com/nearform/bench-template/actions/workflows/ci.yml/badge.svg?event=push)
+![CI](https://github.com/nearform/github-action-todos-to-issue/actions/workflows/ci.yml/badge.svg?event=push)
 
-# Bench Template
-A feature-packed template to start a new repository on the bench, including:
+# github-action-todos-to-issue
+This GitHub action scans your repository looking for TODO comments in your source code and then creates an issue with the found todos.
 
-- code linting with [ESlint](https://eslint.org) and [prettier](https://prettier.io)
-- pre-commit code linting and commit message linting with [husky](https://www.npmjs.com/package/husky) and [commitlint](https://commitlint.js.org/)
-- dependabot setup with automatic merging thanks to ["merge dependabot" GitHub action](https://github.com/fastify/github-action-merge-dependabot)
-- notifications about commits waiting to be released thanks to ["notify release" GitHub action](https://github.com/nearform/github-action-notify-release)
-- PRs' linked issues check with ["check linked issues" GitHub action](https://github.com/nearform/github-action-check-linked-issues)
-- Continuous Integration GitHub workflow
+## Basic example
+To use this action you can simply create a new file in your repository located in `.github/workflows/todos-to-issue.yml` and paste the content below into it:
 
-## When you have already a repo
+```yaml
+name: Todos to issue
 
-If you already created a repo and you want to add some of the features above to it, you can have a look at [NearForm MRM Preset](https://github.com/nearform/mrm-preset-nearform).
+on:
+  push:
+    branches:    
+      - 'main'
+
+jobs:
+  todos-to-issue:
+    runs-on: ubuntu-latest
+    name: Looks for TODO comments in the source code and creates an issue with the found TODOs
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Run todos to issue action
+        uses: nearform/github-action-todos-to-issue@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+You can easily replace the branch on which the scan will be executed (default is _main_) or add multiple branches.
+
+The same applies with the events on which you want to apply the action (default is on _push_ event)
+
+## Inputs
+This action has different inputs, some of them required and others optional:
+
+* `github-token`:
+  * **Description**: this value is automatically populated by GitHub
+  * **Required**: yes
+* `pattern`:
+  * **Description**: it specifies the pattern you want to match during the scan of the source code.
+  * **Required**: no
+  * **Default**: `'TODO:,// TODO'`
+* `scan-dir`:
+  * **Description**: it specifies the directory you want to scan.
+  * **Required**: no
+  * **Default**: `'.'`
