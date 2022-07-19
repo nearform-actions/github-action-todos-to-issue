@@ -8,6 +8,10 @@ import {
   TEST_NOT_MATCHING_DIR,
   TEST_FILE
 } from './constants.js'
+import {
+  buildFileMatchingPatternCommand,
+  buildOccurrencesCommand
+} from '../src/utils.js'
 
 test('getFilesMatchingPattern', async t => {
   t.test(
@@ -43,7 +47,9 @@ test('findOccurrences', async t => {
     async t => {
       const scanModule = await esmock('../src/scan.js', {
         '../src/utils.js': {
-          buildUrl: () => 'https://fake.url'
+          buildUrl: () => 'https://fake.url',
+          buildFileMatchingPatternCommand,
+          buildOccurrencesCommand
         }
       })
 
