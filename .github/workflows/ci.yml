@@ -1,11 +1,9 @@
 name: Continuous Integration
-
-on: 
+on:
   push:
-   branches:
-    - master
-  pull_request:
-
+    branches:
+      - master
+  pull_request: null
 jobs:
   test:
     name: Lint and test
@@ -14,7 +12,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: .nvmrc
       - run: |
           npm ci
           npm run lint
@@ -25,13 +23,13 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: .nvmrc
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - name: "Check dist/index.js does not contain eval('require'), eval(\"require\") or require.resolve"
+      - name: Check dist/index.js does not contain eval('require'), eval("require") or
+          require.resolve
         run: ./check-require.sh
-
   automerge:
     name: Merge dependabot's PRs
     needs: test
@@ -41,5 +39,3 @@ jobs:
       contents: write
     steps:
       - uses: fastify/github-action-merge-dependabot@v3
-        with:
-          github-token: ${{ secrets.github_token }}
