@@ -14,5 +14,3 @@ jobs:
         uses: actions/checkout@v3
       - name: Run todos to issue action
         uses: nearform/github-action-todos-to-issue@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
