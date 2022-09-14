@@ -23,8 +23,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Run todos to issue action
         uses: nearform/github-action-todos-to-issue@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 You can easily replace the branch on which the scan will be executed (default is _main_) or add multiple branches.
@@ -36,7 +34,7 @@ This action has different inputs, some of them required and others optional:
 
 * `github-token`:
   * **Description**: this value is automatically populated by GitHub
-  * **Required**: yes
+  * **Required**: no
 * `pattern`:
   * **Description**: it specifies the pattern you want to match during the scan of the source code.
   * **Required**: no
