@@ -23,7 +23,7 @@
   "homepage": "https://github.com/nearform/github-action-todos-to-issue#readme",
   "devDependencies": {
     "@commitlint/cli": "^17.4.1",
-    "@commitlint/config-conventional": "^17.4.0",
+    "@commitlint/config-conventional": "^17.4.2",
     "@vercel/ncc": "^0.36.0",
     "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.6.0",
