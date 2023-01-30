@@ -1,4 +1,5 @@
 import * as core from '@actions/core'
+import * as toolkit from 'actions-toolkit'
 
 import { logInfo } from './log.js'
 import { getFilesMatchingPattern, findOccurrences } from './scan.js'
@@ -9,6 +10,9 @@ import { publishIssue, renderIssueBody } from './issue.js'
  * @returns Promise<void>
  */
 export async function run() {
+  toolkit.logActionRefWarning()
+  toolkit.logRepoWarning()
+
   // Initialise the GitHub action inputs
   const token = core.getInput('github-token', { required: true })
   const pattern = core.getInput('pattern', { required: false })
