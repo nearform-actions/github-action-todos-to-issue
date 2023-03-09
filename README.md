@@ -18,6 +18,9 @@ jobs:
   todos-to-issue:
     runs-on: ubuntu-latest
     name: Looks for TODO comments in the source code and creates an issue with the found TODOs
+    permissions:
+      pull-requests: write
+      issues: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
