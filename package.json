@@ -12,15 +12,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nearform/github-action-todos-to-issue.git"
+    "url": "git+https://github.com/nearform-actions/github-action-todos-to-issue.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nearform/github-action-todos-to-issue/issues"
+    "url": "https://github.com/nearform-actions/github-action-todos-to-issue/issues"
   },
-  "homepage": "https://github.com/nearform/github-action-todos-to-issue#readme",
+  "homepage": "https://github.com/nearform-actions/github-action-todos-to-issue#readme",
   "devDependencies": {
     "@commitlint/cli": "^17.5.1",
     "@commitlint/config-conventional": "^17.4.4",

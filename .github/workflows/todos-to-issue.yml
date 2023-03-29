@@ -16,4 +16,4 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Run todos to issue action
-        uses: nearform/github-action-todos-to-issue@master
+        uses: nearform-actions/github-action-todos-to-issue@master
