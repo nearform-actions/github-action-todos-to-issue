@@ -1,4 +1,4 @@
-![CI](https://github.com/nearform/github-action-todos-to-issue/actions/workflows/ci.yml/badge.svg?event=push)
+![CI](https://github.com/nearform-actions/github-action-todos-to-issue/actions/workflows/ci.yml/badge.svg?event=push)
 
 # github-action-todos-to-issue
 This GitHub action scans your repository looking for TODO comments in your source code and then creates an issue with the found todos.
@@ -25,7 +25,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Run todos to issue action
-        uses: nearform/github-action-todos-to-issue@v1
+        uses: nearform-actions/github-action-todos-to-issue@v1
 ```
 
 You can easily replace the branch on which the scan will be executed (default is _main_) or add multiple branches.
