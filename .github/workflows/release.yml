@@ -1,6 +1,5 @@
 name: Create a release
-
-on:
+'on':
   workflow_dispatch:
     inputs:
       semver:
@@ -13,20 +12,20 @@ on:
           - minor
           - major
   pull_request:
-    types: [closed]
-
+    types:
+      - closed
 jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
+      contents: write
+      issues: write
       pull-requests: write
-      contents: write    
     steps:
       - name: Node.js runtime on build
         uses: actions/setup-node@v3
         with:
           node-version: 16
-
       - uses: nearform-actions/optic-release-automation-action@v4
         with:
           semver: ${{ github.event.inputs.semver }}
