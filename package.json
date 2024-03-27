@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "eslint .",
     "test": "tap --node-arg=\"--loader=esmock\"",
-    "prepare": "husky install",
+    "prepare": "husky",
     "build": "ncc build src --license licenses.txt"
   },
   "repository": {
