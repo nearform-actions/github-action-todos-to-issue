@@ -41,3 +41,5 @@ jobs:
 You can easily replace the branch on which the scan will be executed (default is `main`) or add multiple branches.
 
 The same applies with the events on which you want to apply the action (default is on `push` event)
+
+[![banner](https://raw.githubusercontent.com/nearform/.github/refs/heads/master/assets/os-banner-green.svg)](https://www.nearform.com/contact/?utm_source=open-source&utm_medium=banner&utm_campaign=os-project-pages)
